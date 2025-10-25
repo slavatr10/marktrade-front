@@ -15,8 +15,8 @@ const ArrowLeft = ({
 }: ArrowLeftProps) => {
   return (
     <svg
-      width="18"
-      height="15"
+      width="13"
+      height="13"
       viewBox="0 0 18 15"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
