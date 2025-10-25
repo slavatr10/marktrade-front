@@ -101,8 +101,8 @@ const WelcomeSecondPage = () => {
         <IntroductionContent
           title="Наша команда и система обучения"
           description="Мы расскажем, почему наша методика работает, как построено обучение, и за счёт чего результаты приходят быстро и без перегрузки. Ты узнаешь, чем наша команда отличается от других: ежедневная поддержка, пошаговая стратегия и реальная торговая практика под руководством наставников. После этого урока у тебя появится уверенность, что ты не один — за твоей спиной будет команда, которая поможет на каждом этапе."
-          videoSrc="https://vz-3325699a-726.b-cdn.net/ddd7c6f7-b637-420f-9a7a-a675dea76a81/playlist.m3u8"
-          thumbnail="https://spro-trade.b-cdn.net/EDU3/v2.jpg"
+          videoSrc="https://vz-774045bd-680.b-cdn.net/76894c8b-5722-4dcc-88f3-d54529cd34cf/playlist.m3u8"
+          thumbnail="https://vz-774045bd-680.b-cdn.net/76894c8b-5722-4dcc-88f3-d54529cd34cf/thumbnail_95062995.jpg"
           headerIcon={switchIcon}
           isActive={true}
           index={0}

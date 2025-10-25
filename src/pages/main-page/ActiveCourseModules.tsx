@@ -6,74 +6,39 @@ import React, {
   useState,
 } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { CategoryItem, GlobalLoader } from '@/components';
-import {
-  useCourse,
-  useCourseProgress,
-  useExercises,
-} from '@/hooks/useMaterialsData';
-import {
-  getCategoryLessons,
-  getCourseProgressInExercises,
-} from '@/api/progress';
+import { CategoryItem } from '@/components';
+
 import {
   MaterialsCategory,
   TrackLessonWithDetails,
-  OpenedCourse,
   Lesson,
 } from '@/types';
 import { sendDepositNotification } from '@/api/sendpulse';
 import { getAuthTelegram } from '@/api/auth';
 
-type Props = { courseId?: string };
+type Props = { 
+  courseId?: string;
+  categories: MaterialsCategory[];
+  lessonsProgress: Record<string, TrackLessonWithDetails[]>;
+  firstTestCompleted: boolean;
+  exerciseQuestions: Record<string, number>;
+};
 
 const FIRST_MODULE_ID = 'ac2b5bb0-c5ce-4622-b1da-feb63fecb735';
 const FIRST_LESSON_IN_MODULE_2_ID = 'f85c93ed-aca4-43d5-a021-d05bbe7a6a2d';
 
-export const ActiveCourseModules: React.FC<Props> = ({ courseId }) => {
+export const ActiveCourseModules: React.FC<Props> = ({ courseId,
+  categories,
+  lessonsProgress,
+  firstTestCompleted,
+  exerciseQuestions, }) => {
   const navigate = useNavigate();
   const search = useSearch({ from: '/' });
   const openCategoryId = search.openCategory;
-  const { data: courseData, isLoading: courseLoading } = useCourse(
-    courseId || ''
-  );
-  const { data: courseProgressData, isLoading: progressLoading } =
-    useCourseProgress(courseId || '');
+
   const userId = localStorage.getItem('user_id') || '';
-  const categoriesData =
-    (courseData as OpenedCourse | undefined)?.categories || [];
 
-  const exerciseIds = useMemo(
-    () => categoriesData.map((c) => c.exercise?.id).filter(Boolean) as string[],
-    [categoriesData]
-  );
-
-  const { data: exercisesData = {} } = useExercises(exerciseIds);
-
-  const exerciseQuestions = useMemo(() => {
-    const out: Record<string, number> = {};
-    Object.entries(exercisesData).forEach(([id, ex]) => {
-      if (ex?.questions) out[id] = ex.questions.length;
-    });
-    return out;
-  }, [exercisesData]);
-
-  const materialsCategories: MaterialsCategory[] = useMemo(
-    () =>
-      categoriesData.map((c) => ({
-        ...c,
-        exerciseId: c.exercise?.id || '',
-        exercise: { number: c.exercise?.number || 0 },
-      })),
-    [categoriesData]
-  );
-
-  const [categories, setCategories] = useState<MaterialsCategory[]>([]);
   const [expandedLesson, setExpandedLesson] = useState<string | null>(null);
-  const [lessonsProgress, setLessonsProgress] = useState<
-    Record<string, TrackLessonWithDetails[]>
-  >({});
-  const [firstTestCompleted, setFirstTestCompleted] = useState(false);
 
   const currentCategory = useMemo(() => {
     const inProgress = categories.find(
@@ -179,63 +144,6 @@ export const ActiveCourseModules: React.FC<Props> = ({ courseId }) => {
   }, [userId]);
 
   useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      if (
-        courseLoading ||
-        progressLoading ||
-        !courseData ||
-        !materialsCategories.length ||
-        !courseProgressData
-      )
-        return;
-
-      const cats: MaterialsCategory[] = [];
-      for (const category of materialsCategories) {
-        const [progressExercise, responseLessonProgress] = await Promise.all([
-          getCourseProgressInExercises(category.id),
-          getCategoryLessons(category.id),
-        ]);
-
-        if (mounted) {
-          setLessonsProgress((prev) => ({
-            ...prev,
-            [category.id]: responseLessonProgress || [],
-          }));
-        }
-
-        if (category.id === FIRST_MODULE_ID)
-          setFirstTestCompleted(!!progressExercise?.completed);
-
-        const lp = responseLessonProgress || [];
-        const completedCount = lp.filter((l) => l.completed).length;
-        const totalCount = lp.length;
-        const calcProgress =
-          totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-        const isCompleted = totalCount > 0 && completedCount === totalCount;
-
-        cats.push({
-          ...category,
-          progress: calcProgress,
-          completed: isCompleted,
-          exerciseCompleted: !!progressExercise?.completed,
-        });
-      }
-      if (mounted) setCategories(cats);
-    };
-    load();
-    return () => {
-      mounted = false;
-    };
-  }, [
-    courseData,
-    materialsCategories,
-    courseProgressData,
-    courseLoading,
-    progressLoading,
-  ]);
-
-  useEffect(() => {
     if (openCategoryId && categories.length > 0) {
       const categoryIndex = categories.findIndex(
         (cat) => cat.id === openCategoryId
@@ -252,7 +160,6 @@ export const ActiveCourseModules: React.FC<Props> = ({ courseId }) => {
   }, [openCategoryId, categories, isCategoryAccessible, navigate]);
 
   if (!courseId) return null;
-  if (courseLoading || progressLoading) return <GlobalLoader />;
 
   return (
     <div className="mt-6">

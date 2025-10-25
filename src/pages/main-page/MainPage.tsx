@@ -4,7 +4,7 @@ import {
   MaterialBlock,
   SuccessPage,
 } from '@/components';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 //import { useLoaderStore } from '@/store';
 // import { Link } from "@tanstack/react-router";
 import bgImage from '@/assets/images/main-bg.png';
@@ -20,6 +20,12 @@ import { getCourseProgressInExercises } from '@/api/progress';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { MaterialsCategory } from '@/types';
 import testingImg from '@/assets/images/testing-img.png';
+import { useExercises } from '@/hooks/useMaterialsData';
+import { OpenedCourse } from '@/types';
+import { useProcessedCategories } from '@/hooks/useProcessedCategories';
+// MainPage.tsx
+import binaryTradingImg from '@/assets/images/binary-trading-img.png';
+// ...
 
 const FIRST_COURSE_ID = '8bc653d6-30fe-4f2a-b636-285a882c744d';
 
@@ -55,14 +61,48 @@ const MainPage: React.FC = () => {
 
   const activeCourse = processedCourses[activeIdx];
   const activeCourseId = activeCourse?.id ?? null;
-  const { data: activeCourseData, isLoading: isCourseDetailsLoading } =
+  const { data: activeCourseData, isFetching: isCourseDetailsLoading } =
     useCourse(activeCourseId);
   const {
     data: activeCourseProgress,
-    isLoading: isProgressLoading,
+    isFetching: isProgressLoading,
     refetch: refetchProgress,
   } = useCourseProgress(activeCourseId);
+  const categoriesData =
+    (activeCourseData as OpenedCourse | undefined)?.categories || [];
 
+  const exerciseIds = useMemo(
+    () => categoriesData.map((c) => c.exercise?.id).filter(Boolean) as string[],
+    [categoriesData]
+  );
+  const { data: exercisesData = {} } = useExercises(exerciseIds);
+
+  const exerciseQuestions = useMemo(() => {
+    const out: Record<string, number> = {};
+    Object.entries(exercisesData).forEach(([id, ex]) => {
+      if (ex?.questions) out[id] = ex.questions.length;
+    });
+    return out;
+  }, [exercisesData]);
+
+  const materialsCategories: MaterialsCategory[] = useMemo(
+    () =>
+      categoriesData.map((c) => ({
+        ...c,
+        exerciseId: c.exercise?.id || '',
+        exercise: { number: c.exercise?.number || 0 },
+      })),
+    [categoriesData]
+  );
+  const isDataReady =
+    !isCourseDetailsLoading && !isProgressLoading && !!activeCourseData;
+
+  const {
+    processedCategories,
+    lessonsProgress,
+    firstTestCompleted,
+    isLoading: isCategoriesLoading,
+  } = useProcessedCategories(materialsCategories, isDataReady);
   const [testsDone, setTestsDone] = useState(0);
 
   const handleSlideChange = (newIndex: number) => {
@@ -90,25 +130,53 @@ const MainPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    let targetProgress = 0; // До якого відсотка ми прагнемо зараз
+  // useEffect(() => {
+  //   let targetProgress = 0; // До якого відсотка ми прагнемо зараз
 
-    // Визначаємо цільовий відсоток залежно від завершених етапів
+  //   // Визначаємо цільовий відсоток залежно від завершених етапів
+  //   if (!isTelegramAuthLoading) {
+  //     targetProgress = 25; // Авторизація завершена
+  //     if (!isDataLoading && processedCourses.length > 0) {
+  //       targetProgress = 50; // Список курсів завантажено
+  //       if (activeCourseId) {
+  //         // Якщо є активний курс, чекаємо його деталей та прогресу
+  //         const detailsDone = !isCourseDetailsLoading && activeCourseData;
+  //         const progressDone = !isProgressLoading && activeCourseProgress;
+  //         if (detailsDone && progressDone) {
+  //           targetProgress = 100; // Все завантажено
+  //         } else if (detailsDone || progressDone) {
+  //           targetProgress = 75; // Завантажено або деталі, або прогрес
+  //         }
+  //       } else {
+  //         targetProgress = 100; // Якщо активний курс не потрібен, завершуємо після списку
+  //       }
+  //     }
+  //   }
+  useEffect(() => {
+    let targetProgress = 0;
+
     if (!isTelegramAuthLoading) {
-      targetProgress = 25; // Авторизація завершена
+      targetProgress = 25;
       if (!isDataLoading && processedCourses.length > 0) {
-        targetProgress = 50; // Список курсів завантажено
+        targetProgress = 50;
+        const img = new Image();
+        img.src = binaryTradingImg;
         if (activeCourseId) {
-          // Якщо є активний курс, чекаємо його деталей та прогресу
           const detailsDone = !isCourseDetailsLoading && activeCourseData;
           const progressDone = !isProgressLoading && activeCourseProgress;
+
           if (detailsDone && progressDone) {
-            targetProgress = 100; // Все завантажено
+            targetProgress = 75; // <-- НЕ 100, а 75!
+
+            // Ось нова перевірка:
+            if (!isCategoriesLoading) {
+              targetProgress = 100; // <-- ТЕПЕР 100, коли модулі теж готові
+            }
           } else if (detailsDone || progressDone) {
-            targetProgress = 75; // Завантажено або деталі, або прогрес
+            targetProgress = 60; // (трохи змінив)
           }
         } else {
-          targetProgress = 100; // Якщо активний курс не потрібен, завершуємо після списку
+          targetProgress = 100;
         }
       }
     }
@@ -140,6 +208,7 @@ const MainPage: React.FC = () => {
     activeCourseData,
     isProgressLoading,
     activeCourseProgress,
+    isCategoriesLoading,
   ]);
   useEffect(() => {
     // Якщо є courseId в URL і список курсів вже завантажено
@@ -315,9 +384,13 @@ const MainPage: React.FC = () => {
           )}
         </HorizontalCarousel>
 
-        {!(isCourseDetailsLoading || isProgressLoading) ? (
+        {!(
+          isCourseDetailsLoading ||
+          isProgressLoading ||
+          isCategoriesLoading
+        ) ? (
           <>
-            {activeCourse.description ? (
+            {activeCourse ? (
               <div className="mb-5">
                 <Title variant="h6" className="text-[#181717] mb-2">
                   {activeCourse.name}
@@ -358,11 +431,24 @@ const MainPage: React.FC = () => {
             ) : (
               <></>
             )}
-            <ActiveCourseModules courseId={activeCourse?.id} />{' '}
+            {/* <ActiveCourseModules courseId={activeCourse?.id} /> */}
+            <ActiveCourseModules
+              key={activeCourse?.id}
+              courseId={activeCourse?.id}
+              categories={processedCategories}
+              lessonsProgress={lessonsProgress}
+              firstTestCompleted={firstTestCompleted}
+              exerciseQuestions={exerciseQuestions}
+            />
           </>
         ) : (
           <div className="flex justify-center items-center mt-10 h-64">
-            <></>
+            <div
+              className="w-12 h-12 border-4 border-[#0049C7] border-t-transparent rounded-full animate-spin"
+              role="status"
+            >
+              <span className="sr-only">Loading...</span>
+            </div>
           </div>
         )}
       </div>
