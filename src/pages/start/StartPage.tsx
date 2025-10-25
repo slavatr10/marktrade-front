@@ -97,7 +97,7 @@ const StartPage = () => {
     >
       <div className="px-4 min-h-screen main-block">
         <div></div>
-        <div>
+        <div className="container">
           <div className="flex justify-center mb-8">
             <img src={logo} className="w-70 h-70"></img>
           </div>
