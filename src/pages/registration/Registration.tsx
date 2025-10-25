@@ -9,6 +9,8 @@ import { ArrowLeft } from '@/assets/icons';
 import { Title } from '@/components/typography';
 import { useNavigate } from '@tanstack/react-router';
 
+import './Registration.scss';
+
 const SENDPULSE_EVENT_FLAG = 'sp_event_bb7cbbea9d544af3e93c2ad9c6eb366a_sent';
 
 const RegistrationPage = () => {
@@ -128,21 +130,6 @@ const RegistrationPage = () => {
     );
   }
 
-  //   const clickId = localStorage.getItem('click_id');
-
-  //   const handleRegisterClick = () => {
-  //     if (clickId) {
-  //       const url = `https://u3.shortink.io/register?utm_campaign=802555&utm_source=affiliate&utm_medium=sr&a=jy9IGDHoNUussf&ac=bot-protrd&code=YRL936&click_id=${clickId}`;
-  //       if (window.Telegram?.WebApp) {
-  //         window.Telegram.WebApp.openLink(url);
-  //       } else {
-  //         window.location.href = url;
-  //       }
-  //     } else {
-  //       console.error('Click ID not found in localStorage');
-  //     }
-  //   };
-
   const handleRegisterCheckUp = async () => {
     try {
       const response = await getAuthTelegram(userId);
@@ -180,7 +167,7 @@ const RegistrationPage = () => {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col justify-between bg-natural-950     pt-[calc(6.8rem+var(--safe-top))]  "
+      className=""
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -188,22 +175,22 @@ const RegistrationPage = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="">
-        <div className="relative flex items-center w-full mb-8">
+      <div className="w-full main-block min-h-screen registration-block">
+        <div className="relative flex items-center w-full">
           {' '}
           <button
             onClick={() => navigate({ to: '/welcome-second' })}
             className="absolute left-4"
           >
-            <ArrowLeft svgColor="black" />
+            <ArrowLeft svgColor="#797979" />
           </button>
-          <Title variant="h2" className="text-[#181717] flex-1 text-center">
+          <Title variant="h2" className="flex-1 text-center title">
             Знакомство с платформой
           </Title>
         </div>
         <IntroductionContent
           title="Регистрация на торговой платформе"
-          description="Пора перейти от теории к практике. В этом видео ты узнаешь, как пройти регистрацию на торговой платформе, подтвердить свой аккаунт и выполнить базовые настройки для начала работы. Мы покажем каждый шаг прямо на экране — без спешки и путаницы, чтобы ты мог просто повторять за нами и всё сделать правильно с первого раза. После этого ты сможешь войти в личный кабинет, протестировать платформу и совершить свою первую демо-сделку. ⚠️ Важно: чтобы перейти к следующему модулю и открыть доступ к следующим урокам, тебе необходимо завершить регистрацию на платформе."
+          description={`Пора перейти от теории к практике. В этом видео ты узнаешь, как пройти регистрацию на торговой платформе, подтвердить свой аккаунт и выполнить базовые настройки для начала работы.`}
           videoSrc="https://vz-3325699a-726.b-cdn.net/3cfe4f01-391b-4b75-b8e8-b8a121442d32/playlist.m3u8"
           thumbnail="https://spro-trade.b-cdn.net/EDU3/reg.jpg"
           headerIcon={handsIcon}
@@ -217,20 +204,6 @@ const RegistrationPage = () => {
           }}
         />
       </div>
-
-      {/* <div className="flex w-full justify-between flex-col items-center mb-5 gap-2 px-4 pb-[calc(2rem+var(--safe-bottom))]">
-        <Button
-          title="Зареєструватись"
-          onClick={handleRegisterClick}
-          isGreen
-          className="w-full"
-        />
-        <Button
-          title="Перевірити"
-          onClick={handleRegisterCheckUp}
-          className="w-full"
-        />
-      </div> */}
     </div>
   );
 };

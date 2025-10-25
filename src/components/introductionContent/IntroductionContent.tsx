@@ -67,7 +67,9 @@ export const IntroductionContent = ({
         </Title>
       </div>
       <Body
-        className={`text-[#323030] ${isActive} description-text`}
+        className={`text-[#323030] description-text ${
+          isRegister ? 'description-text--register' : ''
+        }`}
       >
         {description}
       </Body>

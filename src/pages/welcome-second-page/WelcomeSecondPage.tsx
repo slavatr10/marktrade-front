@@ -93,7 +93,7 @@ const WelcomeSecondPage = () => {
           >
             <ArrowLeft svgColor="#797979" />
           </button>
-          <Title variant="h2" className="text-[#181717] flex-1 text-center title">
+          <Title variant="h2" className="flex-1 text-center title">
             Знакомство с платформой
           </Title>
         </div>
