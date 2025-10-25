@@ -74,7 +74,7 @@ const WelcomeSecondPage = () => {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col justify-between bg-natural-950     pt-[calc(6.8rem+var(--safe-top))]  "
+      className=""
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -82,7 +82,7 @@ const WelcomeSecondPage = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="">
+      <div className="w-full main-block min-h-screen">
         <div className="relative flex items-center w-full mb-8">
           {' '}
           <button
@@ -91,16 +91,16 @@ const WelcomeSecondPage = () => {
             }}
             className="absolute left-4"
           >
-            <ArrowLeft svgColor="black" />
+            <ArrowLeft svgColor="#797979" />
           </button>
-          <Title variant="h2" className="text-[#181717] flex-1 text-center">
+          <Title variant="h2" className="text-[#181717] flex-1 text-center title">
             Знакомство с платформой
           </Title>
         </div>
 
         <IntroductionContent
           title="Наша команда и система обучения"
-          description="Мы расскажем, почему наша методика работает, как построено обучение, и за счёт чего результаты приходят быстро и без перегрузки. Ты узнаешь, чем наша команда отличается от других: ежедневная поддержка, пошаговая стратегия и реальная торговая практика под руководством наставников. После этого урока у тебя появится уверенность, что ты не один — за твоей спиной будет команда, которая поможет на каждом этапе."
+          description="В этом уроке ты узнаешь, как устроено сообщество Trade University. Мы расскажем, из чего состоит система - обучение, сигналы и поддержка - и как всё это помогает тебе расти шаг за шагом вместе с командой."
           videoSrc="https://vz-3325699a-726.b-cdn.net/ddd7c6f7-b637-420f-9a7a-a675dea76a81/playlist.m3u8"
           thumbnail="https://spro-trade.b-cdn.net/EDU3/v2.jpg"
           headerIcon={switchIcon}
@@ -111,11 +111,11 @@ const WelcomeSecondPage = () => {
             throw new Error('Function not implemented.');
           }}
         />
-      </div>
-      <div className="px-4 pb-[calc(2rem+var(--safe-bottom))]">
-        <LinkComponent to="/registration" className="link-next w-full mb-5">
-          <Title variant="h3">Следующий урок</Title>
-        </LinkComponent>
+        <div className="px-4">
+          <LinkComponent to="/registration" className="link-next w-full">
+            <Title variant="h3">Следующий урок</Title>
+          </LinkComponent>
+        </div>
       </div>
     </div>
   );

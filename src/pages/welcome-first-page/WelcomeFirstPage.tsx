@@ -8,6 +8,8 @@ import bgImage from '@/assets/images/main-bg.png';
 import { Title } from '@/components/typography';
 import wayIcon from '@/assets/images/way-icon.png';
 
+import './WelcomeFirstPage.scss';
+
 const SENDPULSE_EVENT_FLAG = 'sp_event_4edc2ef573b946fdefa7ada4749fee0c_sent';
 
 const WelcomeFirstPage = () => {
@@ -130,7 +132,7 @@ const WelcomeFirstPage = () => {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col justify-between bg-natural-950     pt-[calc(6.8rem+var(--safe-top))]  "
+      className="w-full main-block min-h-screen"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -138,14 +140,14 @@ const WelcomeFirstPage = () => {
         backgroundPosition: 'center',
       }}
     >
+      <Title variant="h2" className="text-[#181717] text-center mb-6 title">
+        Знакомство с платформой
+      </Title>
       <div className="">
-        <Title variant="h2" className="text-[#181717] text-center mb-8">
-          Знакомство с платформой
-        </Title>
         {/* <IntroductionHeader isFirstPage={true} /> */}
         <IntroductionContent
           title="Что такое трейдинг: просто о главном"
-          description="Узнай, как работает финансовый рынок и почему трейдинг — это не азарт, а система. Мы разберём, кто такие трейдеры, как они зарабатывают на движении цен и почему каждый человек может освоить этот навык. Ты увидишь реальные примеры сделок и поймёшь, что для старта не нужны миллионы — достаточно знаний и правильного подхода. Этот урок разрушит мифы и покажет, что трейдинг — это инструмент для тех, кто хочет контролировать свой доход."
+          description="Узнай, как работает финансовый рынок и почему трейдинг — это не азарт, а система. Мы разберём, кто такие трейдеры, как они зарабатывают на движении цен и почему каждый человек может освоить этот навык."
           videoSrc="https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/playlist.m3u8"
           thumbnail="https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/thumbnail_b9607889.jpg"
           headerIcon={wayIcon}
@@ -158,7 +160,7 @@ const WelcomeFirstPage = () => {
         />
       </div>
 
-      <div className="px-4 pb-[calc(2rem+var(--safe-bottom))]">
+      <div className="px-4">
         <LinkComponent to="/welcome-second" className="link-next w-full">
           <Title variant="h3">Следующий урок</Title>
         </LinkComponent>

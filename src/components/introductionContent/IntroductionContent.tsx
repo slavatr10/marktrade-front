@@ -1,5 +1,8 @@
 import { Button, VideoPlayer } from '@/components';
 import { Body, Title } from '../typography';
+
+import './introductionContent.scss';
+
 interface IntroductionContentProps {
   title: string;
   description: string;
@@ -22,7 +25,6 @@ export const IntroductionContent = ({
   description,
   videoSrc,
   thumbnail,
-  headerIcon,
   isActive,
   isRegister,
   onRegisterCheck,
@@ -31,19 +33,6 @@ export const IntroductionContent = ({
   totalItems,
   onNext,
 }: IntroductionContentProps) => {
-  // const clickId = localStorage.getItem('click_id');
-  // const handleRegisterClick = () => {
-  //   if (clickId) {
-  //     const url = `https://u3.shortink.io/register?utm_campaign=802555&utm_source=affiliate&utm_medium=sr&a=jy9IGDHoNUussf&ac=bot-protrd&code=YRL936&click_id=${clickId}`;
-  //     if (window.Telegram?.WebApp) {
-  //       window.Telegram.WebApp.openLink(url);
-  //     } else {
-  //       window.location.href = url;
-  //     }
-  //   } else {
-  //     console.error('Click ID not found in localStorage');
-  //   }
-  // };
   const handleRegisterClick = () => {
     // Базова URL-адреса
     let url =
@@ -66,24 +55,22 @@ export const IntroductionContent = ({
   };
 
   return (
-    <div className={`w-full flex flex-col rounded-[20px] px-4 mb-9`}>
-      <div className="flex gap-1 items-center mb-[14px]">
-        <img src={headerIcon} alt="icon" className="w-9 h-9"></img>
-        <Title variant="h2" className="text-[#181717]">
+    <div className={`w-full flex flex-col rounded-[20px] px-4`}>
+      {isActive && (
+        <div className={`w-full rounded-2xl ${isRegister && 'mb-4'} video-player`}>
+          <VideoPlayer src={videoSrc} thumbnail={thumbnail} />
+        </div>
+      )}
+      <div className="flex gap-1 items-center mb-[8px]">
+        <Title className="text-[#181717] sub-title-text">
           {title}
         </Title>
       </div>
       <Body
-        variant="mdRegular"
-        className={`text-[#323030] ${isActive && 'mb-4'}`}
+        className={`text-[#323030] ${isActive} description-text`}
       >
         {description}
       </Body>
-      {isActive && (
-        <div className={`w-full rounded-2xl ${isRegister && 'mb-4'}`}>
-          <VideoPlayer src={videoSrc} thumbnail={thumbnail} />
-        </div>
-      )}
 
       {isActive && !isRegister && index < totalItems - 1 && (
         <div className="mt-4">
