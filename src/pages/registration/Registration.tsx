@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import {
-  SuccessPage,
-  IntroductionHeader,
-  Button,
-  IntroductionContent,
-} from '@/components';
+import { SuccessPage, IntroductionContent } from '@/components';
 import { getAuthTelegram } from '@/api/auth';
 import { useSendPulseTag } from '@/hooks/useSendPulse';
 import { ROUTES } from '@/constants';
+import bgImage from '@/assets/images/main-bg.png';
+import handsIcon from '@/assets/images/hands-icon.png';
+import { ArrowLeft } from '@/assets/icons';
+import { Title } from '@/components/typography';
+import { useNavigate } from '@tanstack/react-router';
 
 const SENDPULSE_EVENT_FLAG = 'sp_event_bb7cbbea9d544af3e93c2ad9c6eb366a_sent';
 
@@ -15,7 +15,7 @@ const RegistrationPage = () => {
   const [registerSuccess, setRegisterSuccess] = useState<boolean>(false);
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
   const { sendTag } = useSendPulseTag();
-
+  const navigate = useNavigate();
   const userId = localStorage.getItem('user_id') || '';
 
   // -------------------------------------------
@@ -115,7 +115,7 @@ const RegistrationPage = () => {
       <SuccessPage
         type={registerSuccess ? 'success' : 'failure'}
         text={registerSuccess ? 'Регистрация успешна' : 'Ошибка регистрации'}
-        linkUrl={registerSuccess ? ROUTES.HOME : ROUTES.WELCOME}
+        linkUrl={registerSuccess ? ROUTES.HOME : '/welcome-first'}
         linkText={registerSuccess ? 'Продолжить' : 'Повторить'}
         setButtonClicked={setButtonClicked}
         isRegistration
@@ -128,20 +128,20 @@ const RegistrationPage = () => {
     );
   }
 
-  const clickId = localStorage.getItem('click_id');
+  //   const clickId = localStorage.getItem('click_id');
 
-  const handleRegisterClick = () => {
-    if (clickId) {
-      const url = `https://u3.shortink.io/register?utm_campaign=802555&utm_source=affiliate&utm_medium=sr&a=jy9IGDHoNUussf&ac=bot-protrd&code=YRL936&click_id=${clickId}`;
-      if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.openLink(url);
-      } else {
-        window.location.href = url;
-      }
-    } else {
-      console.error('Click ID not found in localStorage');
-    }
-  };
+  //   const handleRegisterClick = () => {
+  //     if (clickId) {
+  //       const url = `https://u3.shortink.io/register?utm_campaign=802555&utm_source=affiliate&utm_medium=sr&a=jy9IGDHoNUussf&ac=bot-protrd&code=YRL936&click_id=${clickId}`;
+  //       if (window.Telegram?.WebApp) {
+  //         window.Telegram.WebApp.openLink(url);
+  //       } else {
+  //         window.location.href = url;
+  //       }
+  //     } else {
+  //       console.error('Click ID not found in localStorage');
+  //     }
+  //   };
 
   const handleRegisterCheckUp = async () => {
     try {
@@ -160,7 +160,7 @@ const RegistrationPage = () => {
           'contact_id',
           response?.data?.user?.contactId || ''
         );
-
+        localStorage.setItem('isRegister', 'true');
         const contactId = response.data.user.contactId;
         if (contactId) {
           await sendTag(contactId, ['regdone']);
@@ -179,17 +179,46 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col justify-between bg-natural-950 pt-[calc(5.2rem+var(--safe-top))]">
-      <div className="px-4">
-        <IntroductionHeader isThirdPage={true} />
+    <div
+      className="flex min-h-screen w-full flex-col justify-between bg-natural-950     pt-[calc(6.8rem+var(--safe-top))]  "
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="">
+        <div className="relative flex items-center w-full mb-8">
+          {' '}
+          <button
+            onClick={() => navigate({ to: '/welcome-second' })}
+            className="absolute left-4"
+          >
+            <ArrowLeft svgColor="black" />
+          </button>
+          <Title variant="h2" className="text-[#181717] flex-1 text-center">
+            Знакомство с платформой
+          </Title>
+        </div>
         <IntroductionContent
-                  title="Реєстрація на платформі"
-                  description="На цьому етапі необхідно створити акаунт на платформі брокера, щоб почати практикуватися та заробляти. Вище представлена детальна відеоінструкція з реєстрації"
-                  videoSrc="https://vz-3325699a-726.b-cdn.net/3cfe4f01-391b-4b75-b8e8-b8a121442d32/playlist.m3u8"
-                  thumbnail="https://spro-trade.b-cdn.net/EDU3/reg.jpg" headerIcon={''} isActive={false}        />
+          title="Регистрация на торговой платформе"
+          description="Пора перейти от теории к практике. В этом видео ты узнаешь, как пройти регистрацию на торговой платформе, подтвердить свой аккаунт и выполнить базовые настройки для начала работы. Мы покажем каждый шаг прямо на экране — без спешки и путаницы, чтобы ты мог просто повторять за нами и всё сделать правильно с первого раза. После этого ты сможешь войти в личный кабинет, протестировать платформу и совершить свою первую демо-сделку. ⚠️ Важно: чтобы перейти к следующему модулю и открыть доступ к следующим урокам, тебе необходимо завершить регистрацию на платформе."
+          videoSrc="https://vz-3325699a-726.b-cdn.net/3cfe4f01-391b-4b75-b8e8-b8a121442d32/playlist.m3u8"
+          thumbnail="https://spro-trade.b-cdn.net/EDU3/reg.jpg"
+          headerIcon={handsIcon}
+          isActive={true}
+          isRegister={true}
+          onRegisterCheck={handleRegisterCheckUp}
+          index={0}
+          totalItems={0}
+          onNext={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+        />
       </div>
 
-      <div className="flex w-full justify-between flex-col items-center mb-5 gap-2 px-4 pb-[calc(2rem+var(--safe-bottom))]">
+      {/* <div className="flex w-full justify-between flex-col items-center mb-5 gap-2 px-4 pb-[calc(2rem+var(--safe-bottom))]">
         <Button
           title="Зареєструватись"
           onClick={handleRegisterClick}
@@ -201,7 +230,7 @@ const RegistrationPage = () => {
           onClick={handleRegisterCheckUp}
           className="w-full"
         />
-      </div>
+      </div> */}
     </div>
   );
 };

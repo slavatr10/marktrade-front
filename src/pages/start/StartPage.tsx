@@ -3,49 +3,113 @@ import bgImage from '@/assets/images/main-bg.png';
 import { Body, Title } from '@/components/typography';
 import logo from '@/assets/images/start-logo.png';
 import { useNavigate } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GlobalLoader } from '@/components';
 
 const StartPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const animationIntervalRef = useRef<number | null>(null);
   const handleJoinClick = () => {
-    localStorage.setItem('hasVisited', 'true');
-
-    navigate({ to: '/welcome' });
+    if (localStorage.getItem('isRegister')) {
+      navigate({ to: '/' });
+    } else {
+      navigate({ to: '/welcome-first' });
+    }
   };
+  // useEffect(() => {
+  //   const logoImg = new Image();
+  //   const backgroundImg = new Image();
+  //   let logoLoaded = false;
+  //   let backgroundLoaded = false;
+
+  //   const checkLoadingComplete = () => {
+  //     if (logoLoaded && backgroundLoaded) {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   logoImg.onload = () => {
+  //     logoLoaded = true;
+  //     checkLoadingComplete();
+  //   };
+  //   logoImg.src = logo;
+
+  //   backgroundImg.onload = () => {
+  //     backgroundLoaded = true;
+  //     checkLoadingComplete();
+  //   };
+  //   backgroundImg.src = bgImage;
+
+  //   logoImg.onerror = backgroundImg.onerror = () => {
+  //     console.error('Помилка завантаження зображення для StartPage');
+  //     setIsLoading(false);
+  //   };
+  // }, []);
   useEffect(() => {
     const logoImg = new Image();
     const backgroundImg = new Image();
     let logoLoaded = false;
     let backgroundLoaded = false;
 
-    const checkLoadingComplete = () => {
-      if (logoLoaded && backgroundLoaded) {
+    const loadingComplete = () => {
+      if (animationIntervalRef.current) {
+        clearInterval(animationIntervalRef.current);
+      }
+      setLoadingProgress(100);
+      setTimeout(() => {
         setIsLoading(false);
+      }, 100);
+    };
+
+    // Плавна анімація до 99%
+    animationIntervalRef.current = window.setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev < 99) {
+          return prev + 1;
+        } else {
+          if (animationIntervalRef.current) {
+            clearInterval(animationIntervalRef.current);
+            animationIntervalRef.current = null;
+          }
+          return prev;
+        }
+      });
+    }, 20);
+
+    const checkImagesLoaded = () => {
+      if (logoLoaded && backgroundLoaded) {
+        loadingComplete();
       }
     };
 
     logoImg.onload = () => {
       logoLoaded = true;
-      checkLoadingComplete();
+      checkImagesLoaded();
     };
     logoImg.src = logo;
 
     backgroundImg.onload = () => {
       backgroundLoaded = true;
-      checkLoadingComplete();
+      checkImagesLoaded();
     };
     backgroundImg.src = bgImage;
 
     logoImg.onerror = backgroundImg.onerror = () => {
       console.error('Помилка завантаження зображення для StartPage');
-      setIsLoading(false);
+      loadingComplete();
+    };
+
+    return () => {
+      if (animationIntervalRef.current) {
+        clearInterval(animationIntervalRef.current);
+      }
     };
   }, []);
 
   if (isLoading) {
-    return <GlobalLoader />;
+    return <GlobalLoader progress={loadingProgress} />;
   }
 
   return (

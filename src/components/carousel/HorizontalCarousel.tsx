@@ -1,17 +1,35 @@
-import * as React from 'react';
+import React from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-type Props = { children: React.ReactNode; className?: string };
+import 'swiper/css';
 
-export function HorizontalCarousel({ children, className }: Props) {
+type Props = {
+  children: React.ReactNode;
+  className?: string;
+  onIndexChange: (index: number) => void;
+};
+
+export function HorizontalCarousel({
+  children,
+  className,
+  onIndexChange,
+}: Props) {
   return (
-    <div
-      className={[
-        'overflow-x-auto overscroll-x-contain snap-x snap-mandatory no-scrollbar carousel-gutter',
-        'flex gap-4 -mx-4',
-        className || '',
-      ].join(' ')}
+    <Swiper
+      className={` ${className || ''}`}
+      slidesPerView={'auto'}
+      spaceBetween={16}
+      grabCursor={true}
+      onSlideChange={(swiper) => {
+        onIndexChange(swiper.realIndex);
+      }}
+      initialSlide={0}
     >
-      {children}
-    </div>
+      {React.Children.map(children, (child, index) => (
+        <SwiperSlide key={index} style={{ width: '306px' }}>
+          {child}
+        </SwiperSlide>
+      ))}
+    </Swiper>
   );
 }

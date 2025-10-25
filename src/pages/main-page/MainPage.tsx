@@ -5,7 +5,7 @@ import {
   SuccessPage,
 } from '@/components';
 import React, { useEffect, useState } from 'react';
-import { useLoaderStore } from '@/store';
+//import { useLoaderStore } from '@/store';
 // import { Link } from "@tanstack/react-router";
 import bgImage from '@/assets/images/main-bg.png';
 import { Footer } from '@/components/footer/Footer';
@@ -26,21 +26,21 @@ const FIRST_COURSE_ID = '8bc653d6-30fe-4f2a-b636-285a882c744d';
 const CardItem: React.FC<React.ComponentProps<typeof MaterialBlock>> = (
   props
 ) => (
-  <div className="snap-start shrink-0 w-[306px] mb-11">
+  <div className="snap-start shrink-0 mb-11">
     <MaterialBlock {...props} />
   </div>
 );
 
 const MainPage: React.FC = () => {
-  useTelegramAuth();
   const { status, resetNoAccess, isTelegramAuthLoading } = useTelegramAuth();
   const navigate = useNavigate();
   const [activeIdx, setActiveIdx] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   const search = useSearch({ from: '/' });
   const categoryIdToOpenTest = search.openTestFor;
   const courseIdToActivate = search.courseId;
-  const { loading } = useLoaderStore();
+  // const { loading } = useLoaderStore();
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
   const [categoryForTest, setCategoryForTest] =
     useState<MaterialsCategory | null>(null);
@@ -57,11 +57,90 @@ const MainPage: React.FC = () => {
   const activeCourseId = activeCourse?.id ?? null;
   const { data: activeCourseData, isLoading: isCourseDetailsLoading } =
     useCourse(activeCourseId);
-  const { data: activeCourseProgress, isLoading: isProgressLoading, refetch: refetchProgress } =
-    useCourseProgress(activeCourseId);
+  const {
+    data: activeCourseProgress,
+    isLoading: isProgressLoading,
+    refetch: refetchProgress,
+  } = useCourseProgress(activeCourseId);
 
   const [testsDone, setTestsDone] = useState(0);
 
+  const handleSlideChange = (newIndex: number) => {
+    // Переконуємося, що індекс в межах масиву
+    if (newIndex >= 0 && newIndex < processedCourses.length) {
+      // Оновлюємо активний індекс ТІЛЬКИ ЯКЩО курс не заблокований
+      if (!processedCourses[newIndex].isBlocked) {
+        setActiveIdx(newIndex);
+      }
+      // Якщо курс заблокований, можна нічого не робити,
+      // або, наприклад, автоматично "повернути" карусель назад (це складніше)
+    }
+  };
+
+  const handleCourseClick = (
+    course: (typeof processedCourses)[0],
+    index: number
+  ) => {
+    if (course.isBlocked) {
+      navigate({ to: '/deposit', search: { courseId: course.id } });
+    } else {
+      // Клік на НЕзаблокований курс теж може просто оновлювати індекс,
+      // хоча свайп вже це зробить. Можна залишити для ясності.
+      setActiveIdx(index);
+    }
+  };
+
+  useEffect(() => {
+    let targetProgress = 0; // До якого відсотка ми прагнемо зараз
+
+    // Визначаємо цільовий відсоток залежно від завершених етапів
+    if (!isTelegramAuthLoading) {
+      targetProgress = 25; // Авторизація завершена
+      if (!isDataLoading && processedCourses.length > 0) {
+        targetProgress = 50; // Список курсів завантажено
+        if (activeCourseId) {
+          // Якщо є активний курс, чекаємо його деталей та прогресу
+          const detailsDone = !isCourseDetailsLoading && activeCourseData;
+          const progressDone = !isProgressLoading && activeCourseProgress;
+          if (detailsDone && progressDone) {
+            targetProgress = 100; // Все завантажено
+          } else if (detailsDone || progressDone) {
+            targetProgress = 75; // Завантажено або деталі, або прогрес
+          }
+        } else {
+          targetProgress = 100; // Якщо активний курс не потрібен, завершуємо після списку
+        }
+      }
+    }
+
+    // Анімація прогресу до цільового значення
+    const intervalId = setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev < targetProgress) {
+          // Плавно збільшуємо на 1-2% за крок, але не більше цільового
+          return Math.min(prev + 2, targetProgress);
+        }
+        // Якщо досягли цілі, зупиняємо інтервал для цього етапу
+        if (prev === 100) {
+          clearInterval(intervalId);
+        }
+        return prev; // Залишаємо поточне значення
+      });
+    }, 30); // Швидкість анімації (мілісекунди) - можна підібрати
+
+    // Очищуємо інтервал при зміні залежностей або розмонтуванні компонента
+    return () => clearInterval(intervalId);
+  }, [
+    // Залежності залишаються ті самі
+    isTelegramAuthLoading,
+    isDataLoading,
+    processedCourses,
+    activeCourseId,
+    isCourseDetailsLoading,
+    activeCourseData,
+    isProgressLoading,
+    activeCourseProgress,
+  ]);
   useEffect(() => {
     // Якщо є courseId в URL і список курсів вже завантажено
     if (courseIdToActivate && processedCourses.length > 0) {
@@ -126,21 +205,12 @@ const MainPage: React.FC = () => {
     }
   }, [categoryIdToOpenTest, activeCourseData, navigate]);
 
-  // if (loading || isDataLoading || isTelegramAuthLoading) {
-  //   return <GlobalLoader />;
-  // }
-
-  if (
-    loading ||
-    isDataLoading || 
-    isTelegramAuthLoading ||
-    (activeCourseId && (isCourseDetailsLoading || isProgressLoading))
-  ) {
-    return <GlobalLoader />;
+  if (loadingProgress < 100) {
+    return <GlobalLoader progress={loadingProgress} />;
   }
 
-  if (!activeCourse) {
-    return <GlobalLoader />;
+  if (!activeCourse && !isDataLoading && !isTelegramAuthLoading) {
+    return <GlobalLoader progress={100} />;
   }
 
   if (status === 'no-access') {
@@ -218,10 +288,10 @@ const MainPage: React.FC = () => {
           Начнём обучение!
         </Body>
 
-        <HorizontalCarousel className="mt-2">
+        <HorizontalCarousel className="mt-2" onIndexChange={handleSlideChange}>
           {Array.isArray(processedCourses) && processedCourses.length > 0 ? (
             processedCourses.map((course, index) => (
-              <div>
+              <div onClick={() => handleCourseClick(course, index)}>
                 <CardItem
                   key={course.id}
                   blocked={course.isBlocked}
@@ -230,9 +300,9 @@ const MainPage: React.FC = () => {
                   time={course.hoursQuantity}
                   rating={course.rate}
                   completedLessons={course.completedLessons || 0}
-                  onClick={
-                    !course.isBlocked ? () => setActiveIdx(index) : undefined
-                  }
+                  // onClick={
+                  //   !course.isBlocked ? () => setActiveIdx(index) : undefined
+                  // }
                 />
               </div>
             ))
@@ -245,49 +315,56 @@ const MainPage: React.FC = () => {
           )}
         </HorizontalCarousel>
 
-        {activeCourse.description ? (
-          <div className="mb-5">
-            <Title variant="h6" className="text-[#181717] mb-2">
-              {activeCourse.name}
-            </Title>
+        {!(isCourseDetailsLoading || isProgressLoading) ? (
+          <>
+            {activeCourse.description ? (
+              <div className="mb-5">
+                <Title variant="h6" className="text-[#181717] mb-2">
+                  {activeCourse.name}
+                </Title>
 
-            <div className="mb-4 flex items-center gap-7">
-              <div className="flex items-center">
-                <LessonsIcon />
-                <Body variant="smMedium" className="ml-1 text-[#0049C7]">
-                  {activeCourseProgress?.completedLessons}/
-                  {activeCourse.lessonsQuantity} уроков
-                </Body>
-              </div>
+                <div className="mb-4 flex items-center gap-7">
+                  <div className="flex items-center">
+                    <LessonsIcon />
+                    <Body variant="smMedium" className="ml-1 text-[#0049C7]">
+                      {activeCourseProgress?.completedLessons}/
+                      {activeCourse.lessonsQuantity} уроков
+                    </Body>
+                  </div>
 
-              {/* <div className="flex items-center">
+                  {/* <div className="flex items-center">
                 <PenIcon />
                 <Body variant="smMedium" className="ml-1 text-[#0049C7]">
                   {testsDone}/{activeCourse.exercisesQuantity} тестов
                 </Body>
               </div> */}
-              <div className="flex items-center">
-                <PenIcon />
-                <Body variant="smMedium" className="ml-1 text-[#0049C7]">
-                  {activeCourseId === FIRST_COURSE_ID &&
-                  testsDone === 2 &&
-                  activeCourse.exercisesQuantity === 1
-                    ? 1
-                    : testsDone}
-                  /{activeCourse.exercisesQuantity} тестов
+                  <div className="flex items-center">
+                    <PenIcon />
+                    <Body variant="smMedium" className="ml-1 text-[#0049C7]">
+                      {activeCourseId === FIRST_COURSE_ID &&
+                      testsDone === 2 &&
+                      activeCourse.exercisesQuantity === 1
+                        ? 1
+                        : testsDone}
+                      /{activeCourse.exercisesQuantity} тестов
+                    </Body>
+                  </div>
+                </div>
+
+                <Body variant="smRegular" className="text-light">
+                  {activeCourse.description}
                 </Body>
               </div>
-            </div>
-
-            <Body variant="smRegular" className="text-light">
-              {activeCourse.description}
-            </Body>
-          </div>
+            ) : (
+              <></>
+            )}
+            <ActiveCourseModules courseId={activeCourse?.id} />{' '}
+          </>
         ) : (
-          <></>
+          <div className="flex justify-center items-center mt-10 h-64">
+            <></>
+          </div>
         )}
-
-        <ActiveCourseModules courseId={activeCourse?.id} />
       </div>
 
       <Footer />

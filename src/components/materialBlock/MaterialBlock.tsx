@@ -27,10 +27,10 @@ export const MaterialBlock: React.FC<MaterialBlockProps> = ({
 
   const content = (
     <>
-      <div className="flex justify-between items-center mb-5">
+      <div className="flex justify-between items-center mb-5 h-[4rem]">
         <div className="min-w-0 flex flex-col">
           <Title
-            variant="h5"
+            variant="h2" // h5
             title={title}
             // className="text-[#181717] truncate whitespace-nowrap overflow-hidden"
             className="text-[#181717]"

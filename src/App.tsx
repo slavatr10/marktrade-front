@@ -5,13 +5,13 @@ import {
   createRouter,
   RouterProvider,
   Navigate,
-  redirect,
+  //redirect,
 } from '@tanstack/react-router';
 import { QueryClientProvider } from '@tanstack/react-query';
+import MainPage from './pages/main-page/MainPage';
 import WelcomeFirstPage from './pages/welcome-first-page/WelcomeFirstPage';
 import WelcomeSecondPage from './pages/welcome-second-page/WelcomeSecondPage';
 import RegistrationPage from './pages/registration/Registration';
-import MainPage from './pages/main-page/MainPage';
 import CheckSignUpPage from './pages/check-signup/CheckSignUpPage';
 import MaterialsPage from './pages/materials/Materials';
 import LessonPage from './pages/lesson/Lesson';
@@ -26,20 +26,51 @@ import StartPage from './pages/start/StartPage';
 
 const rootRoute = createRootRoute();
 
-// const homeRoute = createRoute({ path: "/", component: MainPage, getParentRoute: () => rootRoute });
-const homeRoute = createRoute({
-  path: '/',
-  component: MainPage,
-  getParentRoute: () => rootRoute,
-  beforeLoad: () => {
-    if (!localStorage.getItem('hasVisited')) {
-      throw redirect({
-        to: '/start',
-        replace: true,
-      });
-    }
-  },
-});
+const homeRoute = createRoute({ path: "/", component: MainPage, getParentRoute: () => rootRoute });
+// const homeRoute = createRoute({
+//   path: '/',
+//   component: MainPage,
+//   getParentRoute: () => rootRoute,
+//   beforeLoad: () => {
+//     if (!localStorage.getItem('user_id')) {
+//       throw redirect({
+//         to: '/start',
+//         replace: true,
+//       });
+//     }
+//   },
+// });
+// const homeRoute = createRoute({
+//   path: '/',
+//   component: MainPage,
+//   getParentRoute: () => rootRoute,
+//   beforeLoad: () => {
+//     throw redirect({
+//       to: '/start',
+//       replace: true,
+//     });
+//   },
+// });
+// const homeRoute = createRoute({
+//   path: '/',
+//   component: MainPage,
+//   getParentRoute: () => rootRoute,
+//   beforeLoad: () => {
+//     const userId = localStorage.getItem('user_id');
+//     const isRegister = localStorage.getItem('isRegister');
+//     if ((isRegister === 'true') || userId) {
+//       throw redirect({
+//         to: '/',
+//         replace: true,
+//       });
+//     } else {
+//       throw redirect({
+//         to: '/start',
+//         replace: true,
+//       });
+//     }
+//   },
+// });
 const startRoute = createRoute({
   path: '/start',
   component: StartPage,
@@ -65,6 +96,7 @@ const RegistrationPageRoute = createRoute({
   component: RegistrationPage,
   getParentRoute: () => rootRoute,
 });
+
 const CheckSignUpPageRoute = createRoute({
   path: '/check-sign-up',
   component: CheckSignUpPage,

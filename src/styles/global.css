@@ -234,6 +234,36 @@ iframe {
   animation-delay: 0s;
 }
 
+.global-loader-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh; /* Використовуйте dvh для кращої підтримки мобільних */
+  width: 100%;
+  overflow: hidden;
+  /* background-image: var(--loader-bg); */
+  background-image: url('@/assets/images/main-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none; /* Залишаємо, щоб не заважав клікам */
+}
+
+.progress-ring {
+  display: block; /* Прибирає зайвий відступ під SVG */
+}
+
+.progress-ring__circle {
+  stroke-linecap: round; /* Заокруглені кінці лінії прогресу */
+}
+
+.progress-text {
+  font-size: 1.5em; /* Розмір тексту */
+  font-weight: bold;
+  fill: #0049c7; /* Колір тексту (ваш синій) */
+}
+
 .loader-small-white {
   width: 16px;
   margin-left: 20px;
@@ -294,11 +324,10 @@ iframe {
 }
 
 .footer-dent-bar {
-
   -webkit-mask-image: radial-gradient(
     circle at 50% 0,
-    transparent 37px,
-    black 39px
+    transparent 36px,
+    black 20px
   );
 }
 

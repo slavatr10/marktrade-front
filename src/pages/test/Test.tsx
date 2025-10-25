@@ -25,7 +25,7 @@ type AnswerStatus = 'correct' | 'incorrect';
 
 const TestPage = () => {
   const { loading, startLoading, stopLoading } = useLoaderStore();
-
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const search = useSearch({ from: '/test' });
   const courseId = search.course_id;
   const exerciseId = search.exercise_id;
@@ -57,7 +57,11 @@ const TestPage = () => {
   const submit = async (question_id: string, answer: string) =>
     await submitAnswer(question_id, { value: answer } as AnswerType);
   const correctAnswserIndex = answers.findIndex((ans) => ans.isCorrect);
-
+  const currentQuestionPhoto = exercise[questionNumber - 1]?.photo;
+  const shouldShowPhoto =
+    currentQuestionPhoto &&
+    currentQuestionPhoto.trim() !== '' &&
+    currentQuestionPhoto.trim() !== '...';
   const letterPrefix =
     correctAnswserIndex !== -1
       ? `${String.fromCharCode(65 + correctAnswserIndex)}.`
@@ -67,22 +71,28 @@ const TestPage = () => {
     if (!exerciseId) return;
 
     const fetchData = async () => {
+      setLoadingProgress(0);
       startLoading();
       try {
+        setLoadingProgress(50);
         const exerciseData = await getExerciseById(exerciseId);
         const questions = exerciseData?.questions || [];
 
         setExercise(questions);
         setExercisesQuantity(questions.length);
+        setLoadingProgress(100); 
+        await new Promise(resolve => setTimeout(resolve, 300));
       } catch (error) {
         console.error('Помилка завантаження даних тесту:', error);
+        setLoadingProgress(100); 
+        await new Promise(resolve => setTimeout(resolve, 300));
       } finally {
         stopLoading();
       }
     };
 
     fetchData();
-  }, [exerciseId, startLoading, stopLoading]); // Залежність тільки від ID тесту
+  }, [exerciseId, startLoading, stopLoading]);
 
   // ✅ Ефект №2: для оновлення стану ПИТАННЯ, коли змінюється номер або завантажуються дані
   useEffect(() => {
@@ -200,7 +210,7 @@ const TestPage = () => {
 
   console.log(answers.find((el) => el.isCorrect));
   if (loading) {
-    return <GlobalLoader />;
+    return <GlobalLoader progress={loadingProgress} />;
   }
 
   if (!loading && exercisesQuantity > 0 && questionNumber > exercisesQuantity) {
@@ -273,7 +283,14 @@ const TestPage = () => {
             <Body variant="lgRegular" className="text-left text-[#181717]">
               {exercise[questionNumber - 1]?.value}
             </Body>
-            {exercise[questionNumber - 1]?.photo && (
+            {/* {exercise[questionNumber - 1]?.photo && (
+              <img
+                src={exercise[questionNumber - 1]?.photo}
+                alt="Изображение к вопросу"
+                className="flex w-full rounded-3xl mt-3"
+              />
+            )} */}
+            {shouldShowPhoto && (
               <img
                 src={exercise[questionNumber - 1]?.photo}
                 alt="Изображение к вопросу"

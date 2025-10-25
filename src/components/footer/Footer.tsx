@@ -245,7 +245,7 @@ export const Footer: React.FC = () => {
   return (
     <>
       <footer className="fixed bottom-0 left-0 h-[81px]  w-full">
-        <div className="absolute bottom-[58px] left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-[49px] left-1/2 -translate-x-1/2 z-10">
           <Link
             to={ROUTES.HOME}
             className="flex h-[64px] w-[64px] items-center justify-center rounded-full bg-[#005EFF]"
@@ -292,7 +292,7 @@ export const Footer: React.FC = () => {
         isOpen={isSupportOpen}
         onClose={() => setIsSupportOpen(false)}
         title="Поддержка"
-        text1="Если у тебя остались вопросы или что-то непонятно — напиши мне"
+        text1="Если у тебя остались вопросы или что-то непонятно - напиши мне"
         href="https://t.me/SashaPT_CEO"
         linkText="Написать"
         headerImg={supportImg}

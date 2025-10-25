@@ -180,7 +180,7 @@ const DepositPage = () => {
           thumbnail={'https://spro-trade.b-cdn.net/EDU3/v1.jpg'}
         />
       </div>
-      <div className="flex flex-col gap-9 mb-10">
+      <div className="flex flex-col gap-6 mb-10">
         <Body variant="mdRegular" className="text-[#323030]">
           Ты уже сделал главное — решил разобраться в трейдинге. Теперь важно
           перейти к практике. Пополни счёт на платформе, созданный по моей

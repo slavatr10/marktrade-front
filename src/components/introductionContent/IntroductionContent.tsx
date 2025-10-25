@@ -9,6 +9,10 @@ interface IntroductionContentProps {
   isActive: boolean;
   isRegister?: boolean;
   onRegisterCheck?: () => void;
+
+  index: number;
+  totalItems: number;
+  onNext: (currentIndex: number) => void;
 }
 
 //const SENDPULSE_EVENT_FLAG = 'sp_event_bb7cbbea9d544af3e93c2ad9c6eb366a_sent';
@@ -22,6 +26,10 @@ export const IntroductionContent = ({
   isActive,
   isRegister,
   onRegisterCheck,
+
+  index,
+  totalItems,
+  onNext,
 }: IntroductionContentProps) => {
   // const clickId = localStorage.getItem('click_id');
   // const handleRegisterClick = () => {
@@ -58,11 +66,7 @@ export const IntroductionContent = ({
   };
 
   return (
-    <div
-      className={`w-full flex flex-col ${
-        isActive && 'bg-white'
-      } rounded-[20px] p-4 mb-9`}
-    >
+    <div className={`w-full flex flex-col rounded-[20px] px-4 mb-9`}>
       <div className="flex gap-1 items-center mb-[14px]">
         <img src={headerIcon} alt="icon" className="w-9 h-9"></img>
         <Title variant="h2" className="text-[#181717]">
@@ -80,6 +84,18 @@ export const IntroductionContent = ({
           <VideoPlayer src={videoSrc} thumbnail={thumbnail} />
         </div>
       )}
+
+      {isActive && !isRegister && index < totalItems - 1 && (
+        <div className="mt-4">
+          <Button
+            title="Следующий урок"
+            onClick={() => onNext(index)}
+            className="w-full"
+            isGreen
+          />
+        </div>
+      )}
+
       {isRegister && isActive && (
         <div className="flex w-full justify-between flex-col items-center gap-3">
           <Button

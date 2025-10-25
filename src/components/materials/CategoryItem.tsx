@@ -32,7 +32,7 @@ interface CategoryItemProps {
 export const CategoryItem = React.memo(
   ({
     category,
-    index,
+    //index,
     currentCategory,
     expandedLesson,
     courseId,
@@ -79,11 +79,6 @@ export const CategoryItem = React.memo(
       });
     };
 
-    const moduleNumber = (() => {
-      const m = category.name.match(/Модуль\s*(\d+)/i);
-      return m ? parseInt(m[1], 10) : index + 1;
-    })();
-    const moduleTitle = `Блок ${String(moduleNumber).padStart(2, '0')}`;
     const content = (
       <>
         <button
@@ -97,7 +92,7 @@ export const CategoryItem = React.memo(
             <div className="flex flex-col mb-3">
               <div className="flex items-center">
                 <Title variant="h6" className="text-[#181717] mr-3">
-                  {moduleTitle}
+                  {category.name}
                 </Title>
                 {/* <div className="flex items-center">
                   <WatchIcon />
@@ -141,6 +136,10 @@ export const CategoryItem = React.memo(
             {category.lessons.map((lesson, lessonIndex) => {
               const completed = !!ifLessonCompleted(category.id, lesson.id)
                 ?.completed;
+              const shouldDrawLine = !(
+                category.id === 'ac2b5bb0-c5ce-4622-b1da-feb63fecb735' &&
+                lessonIndex === category.lessons.length - 1
+              );
               return (
                 <div className="flex items-center gap-4 mb-4" key={lesson.id}>
                   <button
@@ -171,7 +170,10 @@ export const CategoryItem = React.memo(
                         <div className="mt-1 flex h-[18px] w-[18px] border-2 border-[#B0B3B8] rounded-full bg-white"></div>
                       )}
 
-                      <span className="absolute left-1/2 top-[22px] -translate-x-1/2 bottom-0 w-[2px] h-[100%]  bg-[#E3E8F3]" />
+                      {/* <span className="absolute left-1/2 top-[22px] -translate-x-1/2 bottom-0 w-[2px] h-[100%]  bg-[#E3E8F3]" /> */}
+                      {shouldDrawLine && (
+                        <span className="absolute left-1/2 top-[22px] -translate-x-1/2 bottom-0 w-[2px] h-[100%] bg-[#E3E8F3]" />
+                      )}
                     </div>
                     <div className="">
                       <Body
@@ -198,7 +200,7 @@ export const CategoryItem = React.memo(
                 onClick={handleTestClick}
                 disabled={!allCompletedValue || category.exerciseCompleted}
               >
-                <div className="w-[18px] flex items-center justify-center">
+                <div className="w-[18px] flex items-center justify-center z-0">
                   {(() => {
                     if (category.exerciseCompleted) {
                       return (

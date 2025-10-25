@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { IntroductionContent, SuccessPage } from '@/components';
 import { useSendPulseTag } from '@/hooks/useSendPulse';
 import bgImage from '@/assets/images/main-bg.png';
@@ -48,6 +48,7 @@ const contentData = [
 
 const WelcomePage = () => {
   useTelegramAuth();
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const { sendTag } = useSendPulseTag();
   const [activeIndex, setActiveIndex] = useState(0);
   const [registerSuccess, setRegisterSuccess] = useState<boolean>(false);
@@ -84,6 +85,20 @@ const WelcomePage = () => {
       setRegisterSuccess(false);
     } finally {
       setButtonClicked(true);
+    }
+  };
+
+  const handleNext = (currentIndex: number) => {
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < contentData.length) {
+      setActiveIndex(nextIndex);
+
+      setTimeout(() => {
+        itemRefs.current[nextIndex]?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 50);
     }
   };
 
@@ -140,6 +155,7 @@ const WelcomePage = () => {
         console.warn(
           'Contact ID не знайдено в localStorage. SendPulse Event не відправлено.'
         );
+  
         return;
       }
 
@@ -195,7 +211,7 @@ const WelcomePage = () => {
       <SuccessPage
         type={registerSuccess ? 'success' : 'failure'}
         text={registerSuccess ? 'Регистрация успешна' : 'Ошибка регистрации'}
-        linkUrl={registerSuccess ? ROUTES.HOME : ROUTES.WELCOME}
+        linkUrl={registerSuccess ? ROUTES.HOME : '/welcome-first'}
         linkText={registerSuccess ? 'Продолжить' : 'Повторить'}
         setButtonClicked={setButtonClicked}
         isRegistration
@@ -226,7 +242,21 @@ const WelcomePage = () => {
           {contentData.map((item, index) => (
             <div
               key={index}
-              onClick={() => setActiveIndex(index)}
+              ref={(el) => {
+                itemRefs.current[index] = el;
+              }}
+              onClick={() => {
+                if (activeIndex !== index) {
+                  setActiveIndex(index);
+                  setTimeout(() => {
+                    itemRefs.current[index]?.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'center',
+                    });
+                  }, 50);
+                }
+              }}
+              // onClick={() => setActiveIndex(index)}
               className="relative cursor-pointer pl-12"
             >
               <div className="absolute left-0 top-0 h-full w-8">
@@ -243,6 +273,9 @@ const WelcomePage = () => {
                 onRegisterCheck={
                   item.isRegister ? handleRegisterCheckUp : undefined
                 }
+                index={index}
+                totalItems={contentData.length}
+                onNext={handleNext}
               />
             </div>
           ))}

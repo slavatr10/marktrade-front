@@ -24,7 +24,7 @@ const LessonPage: React.FC = () => {
   const { loading, startLoading, stopLoading } = useLoaderStore();
   const navigate = useNavigate();
   const { sendTag, isLoading: isSendingTag } = useSendPulseTag();
-
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const search = useSearch({ from: '/lesson' });
   const lessonId = search.id;
   const lessonNumber = parseInt(search.lessonNumber || '1', 10);
@@ -44,11 +44,14 @@ const LessonPage: React.FC = () => {
   useEffect(() => {
     if (!categoryId || !lessonId) return;
     const fetchData = async () => {
+      setLoadingProgress(0);
       startLoading();
       try {
+        setLoadingProgress(30);
         const categoryData: Category | undefined = await getCategoryById(
           categoryId
         );
+        setLoadingProgress(60);
         if (!categoryData || !categoryData.lessons)
           throw new Error('Could not load category data.');
         setCategoryDetails(categoryData);
@@ -57,6 +60,7 @@ const LessonPage: React.FC = () => {
         );
         const progressData: TrackLessonWithDetails[] =
           (await getCategoryLessons(categoryId)) || [];
+          setLoadingProgress(90);
         const mergedLessons = staticLessons.map((lesson: Lesson) => {
           const progressInfo = progressData.find(
             (p) => p.lessonId === lesson.id
@@ -74,11 +78,17 @@ const LessonPage: React.FC = () => {
         if (foundLesson) {
           setCurrentLesson(foundLesson);
           setCompleted(foundLesson.completed);
+          setLoadingProgress(100);
+          await new Promise(resolve => setTimeout(resolve, 300));
         } else {
+          setLoadingProgress(100);
+          await new Promise(resolve => setTimeout(resolve, 300));
           navigate({ to: `/materials?id=${courseId}` });
         }
       } catch (error) {
         console.error('Error loading lesson data:', error);
+        setLoadingProgress(100);
+        await new Promise(resolve => setTimeout(resolve, 300));
       } finally {
         stopLoading();
       }
@@ -165,12 +175,15 @@ const LessonPage: React.FC = () => {
     }
   };
 
-  if (loading || !currentLesson) {
-    return <GlobalLoader />;
+  // if (loading || !currentLesson) {
+  //   return <GlobalLoader />;
+  // }
+  if (loadingProgress < 100 || (!loading && !currentLesson)) { 
+    return <GlobalLoader progress={loadingProgress} />;
   }
 
   const currentIndex = allLessons.findIndex(
-    (l) => l.lessonId === currentLesson.lessonId
+    (l) => l.lessonId === currentLesson?.lessonId
   );
   const nextLesson = allLessons[currentIndex + 1];
   const isLastLesson = !nextLesson;
@@ -212,10 +225,10 @@ const LessonPage: React.FC = () => {
           moduleLabel={moduleLabel}
         />
         <Title variant="h1" className="text-[#181717] text-center mb-6">
-          {currentLesson.lesson.name}
+          {currentLesson?.lesson.name}
         </Title>
         <div className="mb-8">
-          {currentLesson.lesson?.video && (
+          {currentLesson?.lesson?.video && (
             <VideoPlayer
               thumbnail={currentLesson.lesson.thumbnail}
               src={currentLesson.lesson.video}
@@ -327,7 +340,7 @@ const LessonPage: React.FC = () => {
             </Link>
           )}
         </div>
-        {currentLesson.lesson.methodology && (
+        {currentLesson?.lesson.methodology && (
           <MethodichkaButton href={currentLesson.lesson.methodology} />
         )}
       </div>
