@@ -1,0 +1,12 @@
+export { default as TelegramIcon } from "./TelegramIcon";
+export { default as ChevronLeft } from "./ChevronLeft";
+export { default as ArrowLeft } from "./ArrowLeft";
+export { default as CrossIcon } from "./CrossIcon";
+export { default as TestIcon } from "./TestIcon";
+export { default as WatchIcon } from "./WatchIcon";
+export { default as StarIcon } from "./StarIcon";
+export { default as BooksIcon } from "./BooksIcon";
+export { default as TestsIcon } from "./TestsIcon";
+export { default as PlayIcon } from "./PlayIcon";
+export { default as CheckmarkIcon } from "./CheckmarkIcon";
+export { default as ChartIcon } from "./ChartIcon";
