@@ -95,7 +95,7 @@ const StartPage = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="px-4 main-block">
+      <div className="px-4 min-h-screen main-block">
         <div></div>
         <div className="container">
           <div className="flex justify-center mb-8">
