@@ -16,7 +16,7 @@ export function HorizontalCarousel({
 }: Props) {
   return (
     <Swiper
-      className={` ${className || ''}`}
+      className={className}
       slidesPerView={'auto'}
       spaceBetween={16}
       grabCursor={true}
@@ -24,6 +24,8 @@ export function HorizontalCarousel({
         onIndexChange(swiper.realIndex);
       }}
       initialSlide={0}
+      centeredSlides={true}
+      centeredSlidesBounds={true}
     >
       {React.Children.map(children, (child, index) => (
         <SwiperSlide key={index} style={{ width: '306px' }}>
