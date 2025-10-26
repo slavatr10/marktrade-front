@@ -357,7 +357,7 @@ const MainPage: React.FC = () => {
           Начнём обучение!
         </Body>
 
-        <HorizontalCarousel className="mt-2" onIndexChange={handleSlideChange}>
+        <HorizontalCarousel className="mt-2 !-mx-4 !px-4" onIndexChange={handleSlideChange}>
           {Array.isArray(processedCourses) && processedCourses.length > 0 ? (
             processedCourses.map((course, index) => (
               <div onClick={() => handleCourseClick(course, index)}>
