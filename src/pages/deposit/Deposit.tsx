@@ -160,7 +160,7 @@ const DepositPage = () => {
 
   return (
     <div
-      className="flex flex-col min-h-screen p-4 bg-neutral-950 rounded shadow-md pt-[calc(5.2rem+var(--safe-top))] pb-[calc(2rem+var(--safe-bottom))]"
+      className="flex flex-col justify-between min-h-screen p-4 bg-neutral-950 rounded shadow-md pt-24 pb-24"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -172,54 +172,41 @@ const DepositPage = () => {
       <Title variant="h1" className="mb-6 text-[#181717] text-center">
         Депозит на платформе
       </Title>
-      <div className={`w-full rounded-2xl mb-8`}>
-        <VideoPlayer
-          src={
-            'https://iframe.mediadelivery.net/play/511840/6ae24a8c-62f7-4044-b181-92ab1c95d8dc'
-          }
-          thumbnail={'https://spro-trade.b-cdn.net/EDU3/v1.jpg'}
+      <div>
+        <div className={`w-full rounded-2xl mb-8`}>
+          <VideoPlayer
+            src={
+              'https://iframe.mediadelivery.net/play/511840/6ae24a8c-62f7-4044-b181-92ab1c95d8dc'
+            }
+            thumbnail={'https://spro-trade.b-cdn.net/EDU3/v1.jpg'}
+          />
+        </div>
+        <div className="flex flex-col gap-6 mb-10">
+          <Body variant="mdRegular" className="text-[#323030]">
+            Ты уже сделал главное — решил разобраться в трейдинге. Теперь важно
+            перейти к практике. Пополни счёт на платформе, созданный по моей
+            ссылке - это подтвердит, что ты в команде, и откроет доступ ко всем
+            инструментам
+          </Body>
+        </div>
+      </div>
+      <div>
+        <LinkComponent
+          to={buildDepositUrl()}
+          target="_blank"
+          className="w-full mb-3"
+        >
+          <Title variant="h6">Сделать депозит</Title>
+        </LinkComponent>
+
+        <Button
+          className="w-full"
+          onClick={handleVerifyDeposit}
+          title="Проверить"
+          isLoading={loadingCheckDeposit}
+          styledClassName="!text-[#181717]"
         />
       </div>
-      <div className="flex flex-col gap-6 mb-10">
-        <Body variant="mdRegular" className="text-[#323030]">
-          Ты уже сделал главное — решил разобраться в трейдинге. Теперь важно
-          перейти к практике. Пополни счёт на платформе, созданный по моей
-          ссылке - это подтвердит, что ты в команде, и откроет доступ ко всем
-          инструментам
-        </Body>
-        <Body variant="mdRegular" className="text-[#323030]">
-          <b>Практика</b> - ключ к результату. Даже минимальный
-          депозит помогает почувствовать рынок изнутри.
-          <br /> <b>После пополнения</b> ты получишь доступ к закрытым
-          материалам, аналитике и сигналам в реальном времени.
-          <br />
-          <b>Комьюнити и поддержка</b> <br />
-          Ты не один - рядом трейдеры, которые идут тем же путём
-        </Body>
-        <Body variant="mdRegular" className="text-[#323030]">
-          <b>Условия:</b> Минимум 15$ - чтобы начать спокойно.
-          Оптимально от 100$ чтобы видеть реальный результат.
-        </Body>
-        <Body variant="mdRegular" className="text-[#323030]">
-          <b>Важно:</b> депозит - это не трата. Это твои деньги, ты
-          можешь вывести их в любой момент.
-        </Body>
-      </div>
-      <LinkComponent
-        to={buildDepositUrl()}
-        target="_blank"
-        className="w-full mb-3"
-      >
-        <Title variant="h6">Сделать депозит</Title>
-      </LinkComponent>
-
-      <Button
-        className="w-full"
-        onClick={handleVerifyDeposit}
-        title="Проверить"
-        isLoading={loadingCheckDeposit}
-        styledClassName="!text-[#181717]"
-      />
     </div>
   );
 };
