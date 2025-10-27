@@ -5,10 +5,10 @@ import { useSendPulseTag } from "@/hooks/useSendPulse";
 
 type AuthStatus = "loading" | "authenticated" | "no-access" | "welcome" | "error";
 
-// interface TelegramUser {
-//     id: number;
-//     username?: string;
-// }
+interface TelegramUser {
+    id: number;
+    username?: string;
+}
 
 interface UseTelegramAuthReturn {
     status: AuthStatus;
@@ -17,10 +17,10 @@ interface UseTelegramAuthReturn {
 }
 
 /** ───────────── storage helpers ───────────── */
-// const saveTelegramUser = (user: TelegramUser) => {
-//     localStorage.setItem("user_name", user.username || "");
-//     localStorage.setItem("user_id", String(user.id));
-// };
+const saveTelegramUser = (user: TelegramUser) => {
+    localStorage.setItem("user_name", user.username || "");
+    localStorage.setItem("user_id", String(user.id));
+};
 
 const saveUserData = (clickId: string, contactId: string) => {
     localStorage.setItem("click_id", clickId || "");
@@ -37,37 +37,37 @@ const saveTokens = (accessToken?: string, refreshToken?: string) => {
  * <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
  * <script type="module" src="/src/index.tsx"></script>
  */
-// const initializeTelegramWebApp = (): boolean => {
-//     const tg = (window as any).Telegram?.WebApp;
-//     if (!tg) return false;
+const initializeTelegramWebApp = (): boolean => {
+    const tg = (window as any).Telegram?.WebApp;
+    if (!tg) return false;
 
-//     try {
-//         tg.ready();
-//         tg.expand?.();
-//         const user = tg.initDataUnsafe?.user as TelegramUser | undefined;
-//         if (!user?.id) return false;
-//         saveTelegramUser(user);
-//         return true;
-//     } catch {
-//         return false;
-//     }
-// };
+    try {
+        tg.ready();
+        tg.expand?.();
+        const user = tg.initDataUnsafe?.user as TelegramUser | undefined;
+        if (!user?.id) return false;
+        saveTelegramUser(user);
+        return true;
+    } catch {
+        return false;
+    }
+};
 
-// /** Короткий полінг SDK: 100мс, максимум ~3с */
-// const waitForTelegramSDK = (timeoutMs = 3000, stepMs = 100): Promise<boolean> =>
-//     new Promise((resolve) => {
-//         if ((window as any).Telegram?.WebApp) return resolve(true);
-//         let elapsed = 0;
-//         const id = window.setInterval(() => {
-//             if ((window as any).Telegram?.WebApp) {
-//                 clearInterval(id);
-//                 resolve(true);
-//             } else if ((elapsed += stepMs) >= timeoutMs) {
-//                 clearInterval(id);
-//                 resolve(false);
-//             }
-//         }, stepMs);
-//     });
+/** Короткий полінг SDK: 100мс, максимум ~3с */
+const waitForTelegramSDK = (timeoutMs = 3000, stepMs = 100): Promise<boolean> =>
+    new Promise((resolve) => {
+        if ((window as any).Telegram?.WebApp) return resolve(true);
+        let elapsed = 0;
+        const id = window.setInterval(() => {
+            if ((window as any).Telegram?.WebApp) {
+                clearInterval(id);
+                resolve(true);
+            } else if ((elapsed += stepMs) >= timeoutMs) {
+                clearInterval(id);
+                resolve(false);
+            }
+        }, stepMs);
+    });
 
 /** ───────────── Наперед підвантажити чанк головної сторінки ─────────────
  * Шлях має бути ТОЧНО як у твоєму lazy-імпорті для /main
@@ -145,17 +145,17 @@ export const useTelegramAuth = (): UseTelegramAuthReturn => {
             setIsLoading(true);
 
             try {
-                // const sdkAvailable = await waitForTelegramSDK();
-                // if (!sdkAvailable) {
-                //     if (mountedRef.current) setStatus("error");
-                //     return;
-                // }
+                const sdkAvailable = await waitForTelegramSDK();
+                if (!sdkAvailable) {
+                    if (mountedRef.current) setStatus("error");
+                    return;
+                }
 
-                // const ok = initializeTelegramWebApp();
-                // if (!ok) {
-                //     if (mountedRef.current) setStatus("error");
-                //     return;
-                // }
+                const ok = initializeTelegramWebApp();
+                if (!ok) {
+                    if (mountedRef.current) setStatus("error");
+                    return;
+                }
 
                 const userId = localStorage.getItem("user_id") || "";
                 if (!userId) {
