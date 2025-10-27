@@ -88,7 +88,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
       {showConfetti && <ConfettiAnimation duration={5000} particleCount={60} />}
 
       <div className="flex flex-col items-center min-h-screen p-4 w-full">
-        <div className="absolute right-5 top-[calc(5.1rem+var(--safe-top))]">
+        <div className="absolute right-5 top-[calc(7.1rem+var(--safe-top))]">
           <button
             className="cursor-pointer"
             onClick={() => navigate({ to: linkUrl })}
