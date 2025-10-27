@@ -93,7 +93,7 @@ const handleAuthResponse = async (
                 return "no-access";
             case 401:
                 saveUserData(response.data?.clickId || "", String(response.data?.contactId || ""));
-                navigate({ to: "/welcome-first" });
+                navigate({ to: "/start" });
                 return "welcome";
             default:
                 return "error";
