@@ -56,23 +56,23 @@ export const IntroductionContent = ({
 
   return (
     <div className={`w-full flex flex-col rounded-[20px] px-4`}>
-      {isActive && (
-        <div className={`w-full rounded-2xl ${isRegister && 'mb-4'} video-player`}>
-          <VideoPlayer src={videoSrc} thumbnail={thumbnail} />
-        </div>
-      )}
       <div className="flex gap-1 items-center mb-[8px]">
         <Title className="text-[#181717] sub-title-text">
           {title}
         </Title>
       </div>
       <Body
-        className={`text-[#323030] description-text ${
-          isRegister ? 'description-text--register' : ''
-        }`}
+        className={`text-[#323030] description-text`}
       >
         {description}
       </Body>
+      {isActive && (
+        <div className={`w-full rounded-2xl ${isRegister && 'mb-4'} video-player ${
+          isRegister ? 'player--register' : ''
+        }`}>
+          <VideoPlayer src={videoSrc} thumbnail={thumbnail} />
+        </div>
+      )}
 
       {isActive && !isRegister && index < totalItems - 1 && (
         <div className="mt-4">
