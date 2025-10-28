@@ -1,6 +1,5 @@
 import { Button, VideoPlayer } from '@/components';
-import { Body, Title } from '../typography';
-
+import { Body, Title } from '@/components/typography';
 import './introductionContent.scss';
 
 interface IntroductionContentProps {
@@ -8,7 +7,7 @@ interface IntroductionContentProps {
   description: string;
   videoSrc: string;
   thumbnail?: string;
-  headerIcon: string;
+  headerIcon?: string;
   isActive: boolean;
   isRegister?: boolean;
   onRegisterCheck?: () => void;
@@ -16,23 +15,25 @@ interface IntroductionContentProps {
   index: number;
   totalItems: number;
   onNext: (currentIndex: number) => void;
+
+  /** якщо треба вимкнути внутрішню кнопку «Следующий урок» */
+  showNextButton?: boolean;
 }
 
-//const SENDPULSE_EVENT_FLAG = 'sp_event_bb7cbbea9d544af3e93c2ad9c6eb366a_sent';
-
 export const IntroductionContent = ({
-  title,
-  description,
-  videoSrc,
-  thumbnail,
-  isActive,
-  isRegister,
-  onRegisterCheck,
-
-  index,
-  totalItems,
-  onNext,
-}: IntroductionContentProps) => {
+                                      title,
+                                      description,
+                                      videoSrc,
+                                      thumbnail,
+                                      headerIcon,
+                                      isActive,
+                                      isRegister,
+                                      onRegisterCheck,
+                                      index,
+                                      totalItems,
+                                      onNext,
+                                      showNextButton = true,
+                                    }: IntroductionContentProps) => {
   const handleRegisterClick = () => {
     // Базова URL-адреса
     let url =
@@ -55,26 +56,31 @@ export const IntroductionContent = ({
   };
 
   return (
-    <div className={`w-full flex flex-col rounded-[20px] px-4`}>
+    // ⚠️ без внутрішніх px-4 — сітку дає IntroLayout
+    <div className="w-full flex flex-col rounded-[20px]">
       <div className="flex gap-1 items-center mb-[8px]">
+        {headerIcon ? <img src={headerIcon} alt="" width={20} height={20} /> : null}
         <Title className="text-[#181717] sub-title-text">
           {title}
         </Title>
       </div>
-      <Body
-        className={`text-[#323030] description-text`}
-      >
+
+      <Body className="text-[#323030] description-text">
         {description}
       </Body>
+
       {isActive && (
-        <div className={`w-full rounded-2xl ${isRegister && 'mb-4'} video-player ${
-          isRegister ? 'player--register' : ''
-        }`}>
+        <div
+          className={`w-full rounded-2xl ${isRegister ? 'mb-4' : ''} video-player ${
+            isRegister ? 'player--register' : ''
+          }`}
+        >
           <VideoPlayer src={videoSrc} thumbnail={thumbnail} />
         </div>
       )}
 
-      {isActive && !isRegister && index < totalItems - 1 && (
+      {/* Кнопка «Следующий урок» — тільки якщо не режим регистрации і є наступний урок */}
+      {showNextButton && isActive && !isRegister && index < totalItems - 1 && (
         <div className="mt-4">
           <Button
             title="Следующий урок"
@@ -85,20 +91,28 @@ export const IntroductionContent = ({
         </div>
       )}
 
+      {/* Режим реєстрації: 2 кнопки, з вирівняними відступами */}
       {isRegister && isActive && (
-        <div className="flex w-full justify-between flex-col items-center gap-3">
-          <Button
-            title="Регистрация"
-            onClick={handleRegisterClick}
-            isGreen
-            className="w-full"
-          />
-          <Button
-            title="Проверить регистрацию"
-            onClick={onRegisterCheck || (() => {})}
-            className="w-full"
-            styledClassName="!text-[#181717]"
-          />
+        <div className="flex w-full flex-col items-center">
+          {/* 1) Перша кнопка — на одному рівні, як на інших сторінках */}
+          <div className="w-full mt-4">
+            <Button
+              title="Регистрация"
+              onClick={handleRegisterClick}
+              isGreen
+              className="w-full"
+            />
+          </div>
+
+          {/* 2) Друга кнопка — нижче, з додатковим простором внизу */}
+          <div className="w-full mt-3 mb-6">
+            <Button
+              title="Проверить регистрацию"
+              onClick={onRegisterCheck || (() => {})}
+              className="w-full"
+              styledClassName="!text-[#181717]"
+            />
+          </div>
         </div>
       )}
     </div>

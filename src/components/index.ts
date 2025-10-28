@@ -14,3 +14,4 @@ export * from "./badge";
 export * from "./checkbox";
 export * from "./confetti";
 export * from "./materials";
+export * from "./introLayout";
