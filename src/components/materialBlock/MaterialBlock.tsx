@@ -1,4 +1,3 @@
-
 import binaryTradingImg from '@/assets/images/binary-trading-img.png';
 import LockIcon from '@/assets/icons/LockIcon';
 import { Body, Title } from '../typography';

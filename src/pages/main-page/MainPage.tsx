@@ -121,37 +121,13 @@ const MainPage: React.FC = () => {
     course: (typeof processedCourses)[0],
     index: number
   ) => {
-    if (course.isBlocked) {
-      navigate({ to: '/deposit', search: { courseId: course.id } });
-    } else {
+    if (!course.isBlocked) {
       // Клік на НЕзаблокований курс теж може просто оновлювати індекс,
       // хоча свайп вже це зробить. Можна залишити для ясності.
       setActiveIdx(index);
     }
   };
 
-  // useEffect(() => {
-  //   let targetProgress = 0; // До якого відсотка ми прагнемо зараз
-
-  //   // Визначаємо цільовий відсоток залежно від завершених етапів
-  //   if (!isTelegramAuthLoading) {
-  //     targetProgress = 25; // Авторизація завершена
-  //     if (!isDataLoading && processedCourses.length > 0) {
-  //       targetProgress = 50; // Список курсів завантажено
-  //       if (activeCourseId) {
-  //         // Якщо є активний курс, чекаємо його деталей та прогресу
-  //         const detailsDone = !isCourseDetailsLoading && activeCourseData;
-  //         const progressDone = !isProgressLoading && activeCourseProgress;
-  //         if (detailsDone && progressDone) {
-  //           targetProgress = 100; // Все завантажено
-  //         } else if (detailsDone || progressDone) {
-  //           targetProgress = 75; // Завантажено або деталі, або прогрес
-  //         }
-  //       } else {
-  //         targetProgress = 100; // Якщо активний курс не потрібен, завершуємо після списку
-  //       }
-  //     }
-  //   }
   useEffect(() => {
     let targetProgress = 0;
 

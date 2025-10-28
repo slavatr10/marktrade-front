@@ -4,6 +4,8 @@ import { Button, LinkComponent, SuccessPage, VideoPlayer } from '@/components';
 import { useSendPulseTag } from '@/hooks/useSendPulse';
 import bgImage from '@/assets/images/main-bg.png';
 import { Body, Title } from '@/components/typography';
+import { ArrowLeft } from "@/assets/icons";
+import { useNavigate } from "@tanstack/react-router";
 
 const SENDPULSE_EVENT_FLAG = 'sp_event_136f6be1a25b488afabce0671ab99e9c_sent';
 const spTagFlagKey = (contactId: string) =>
@@ -15,6 +17,7 @@ const DepositPage = () => {
   const [loadingCheckDeposit, setLoadingCheckDeposit] = useState(false);
   const [depositSuccess, setDepositSuccess] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
+  const navigate = useNavigate();
 
   const userId = localStorage.getItem('user_id') || '';
   // const search = useSearch({ from: '/deposit' });
@@ -169,6 +172,14 @@ const DepositPage = () => {
       }}
     >
       {/* <IntroductionHeader type="text" title="" /> */}
+      <button
+        onClick={() => {
+          navigate({ to: '/' });
+        }}
+        className="absolute left-4 top-[104px]"
+      >
+        <ArrowLeft svgColor="black" width={18} height={18}/>
+      </button>
       <Title variant="h1" className="mb-6 text-[#181717] text-center">
         Депозит на платформе
       </Title>

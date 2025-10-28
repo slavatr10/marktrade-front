@@ -6,17 +6,21 @@ interface ArrowLeftProps {
   svgColor?: string;
   direction?: Direction;
   className?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
 const ArrowLeft = ({
   svgColor = "white",
   direction = "left",
   className,
+  width = 13,
+  height = 13,
 }: ArrowLeftProps) => {
   return (
     <svg
-      width="13"
-      height="13"
+      width={width}
+      height={height}
       viewBox="0 0 18 15"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

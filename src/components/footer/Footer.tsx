@@ -244,17 +244,9 @@ export const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="fixed bottom-0 left-0 h-[81px]  w-full">
-        <div className="absolute bottom-[49px] left-1/2 -translate-x-1/2 z-10">
-          <Link
-            to={ROUTES.HOME}
-            className="flex h-[64px] w-[64px] items-center justify-center rounded-full bg-[#005EFF]"
-          >
-            <HomeIcon />
-          </Link>
-        </div>
+      <footer className="fixed bottom-0 left-0 h-[64px]  w-full">
 
-        <div className="relative flex h-full items-center justify-around text-white bg-white footer-dent-bar">
+        <div className="relative flex h-full items-center justify-around text-white bg-white">
           <button
             onClick={handleClickCommunity}
             className="flex h-[72px] w-[75px] flex-col items-center justify-center text-[#B0B3B8]"
@@ -268,15 +260,13 @@ export const Footer: React.FC = () => {
           <NavItem to="https://help.sprotrade.com/" label="Стратегии">
             <MetodichkaIcon />
           </NavItem>
-          {/* <div className="absolute -top-8">
-            <Link
-              to={ROUTES.HOME}
-              className="flex ml-[1px] h-[64px] w-[64px] items-center justify-center rounded-full bg-[#005EFF]"
-            >
-              <HomeIcon />
-            </Link>
-          </div> */}
-          <div className="w-[60px]" />
+
+          <Link
+            to={ROUTES.HOME}
+            className="flex h-[58px] w-[58px] items-center justify-center rounded-full bg-[#005EFF]"
+          >
+            <HomeIcon width={24} height={24} />
+          </Link>
 
           <NavItem onClick={handleDepositClick} label="Платформа">
             <PlatformIcon />
