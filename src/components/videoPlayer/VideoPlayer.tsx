@@ -7,10 +7,10 @@ interface VideoPlayerProps {
 }
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({
-  src,
-  thumbnail,
-  onFirstPlay,
-}) => {
+                                                          src,
+                                                          thumbnail,
+                                                          onFirstPlay,
+                                                        }) => {
   return (
     <div
       className="w-full rounded-3xl overflow-hidden relative pt-[56.25%]"
@@ -25,26 +25,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           width="100%"
           height="100%"
           className="absolute top-0 left-0 rounded-2xl"
-          light={
-            thumbnail ? (
-              <img
-                src={thumbnail}
-                alt=""
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ) : true
-          }
-          config={{
-            file: {
-              attributes: {
-                preload: 'metadata',
-                playsInline: true,
-              },
-            },
-          }}
+          light={thumbnail}
           // onPlay={() => onFirstPlay?.()}
           //onStart={() => console.log('start')}
         />
