@@ -6,17 +6,32 @@ import { useEffect, useRef, useState } from 'react';
 import { GlobalLoader } from '@/components';
 
 import './StartPage.scss';
+import { getAuthTelegram } from "@/api/auth.ts";
 
 const StartPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const animationIntervalRef = useRef<number | null>(null);
-  const handleJoinClick = () => {
-    if (localStorage.getItem('isRegister')) {
-      navigate({ to: '/' });
-    } else {
-      navigate({ to: '/welcome-first' });
+  const handleJoinClick = async () => {
+    const userId = localStorage.getItem('user_id') || '';
+    try {
+      const res = await getAuthTelegram(userId);
+      const registered = !!res?.data?.user?.registration;
+
+      if (registered) {
+        localStorage.setItem('isRegister', 'true');
+        navigate({ to: '/' });
+      } else {
+        localStorage.removeItem('isRegister');
+        navigate({ to: '/welcome-first' });
+      }
+    } catch {
+      if (localStorage.getItem('isRegister')) {
+        navigate({ to: '/' });
+      } else {
+        navigate({ to: '/welcome-first' });
+      }
     }
   };
 
