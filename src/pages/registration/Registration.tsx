@@ -192,7 +192,7 @@ const RegistrationPage = () => {
           title="Регистрация на торговой платформе"
           description={`Пора перейти от теории к практике. В этом видео ты узнаешь, как пройти регистрацию на торговой платформе, подтвердить свой аккаунт и выполнить базовые настройки для начала работы.`}
           videoSrc="https://vz-3325699a-726.b-cdn.net/3cfe4f01-391b-4b75-b8e8-b8a121442d32/playlist.m3u8"
-          thumbnail="https://spro-trade.b-cdn.net/EDU3/reg.jpg"
+          thumbnail="https://vz-774045bd-680.b-cdn.net/48916f04-c1af-4ab5-9f09-5bc356a6ec91/thumbnail_ee5bdcc0.jpg"
           headerIcon={handsIcon}
           isActive={true}
           isRegister={true}

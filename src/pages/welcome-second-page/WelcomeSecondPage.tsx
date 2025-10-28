@@ -102,7 +102,7 @@ const WelcomeSecondPage = () => {
           title="Наша команда и система обучения"
           description="В этом уроке ты узнаешь, как устроено сообщество Trade University. Мы расскажем, из чего состоит система - обучение, сигналы и поддержка - и как всё это помогает тебе расти шаг за шагом вместе с командой."
           videoSrc="https://vz-3325699a-726.b-cdn.net/ddd7c6f7-b637-420f-9a7a-a675dea76a81/playlist.m3u8"
-          thumbnail="https://spro-trade.b-cdn.net/EDU3/v2.jpg"
+          thumbnail="https://vz-774045bd-680.b-cdn.net/76894c8b-5722-4dcc-88f3-d54529cd34cf/thumbnail_95062995.jpg"
           headerIcon={switchIcon}
           isActive={true}
           index={0}
