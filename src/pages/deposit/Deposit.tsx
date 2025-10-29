@@ -147,7 +147,7 @@ const DepositPage = () => {
       <SuccessPage
         type={depositSuccess ? 'success' : 'failure'}
         text={depositSuccess ? 'Депозит успешен!' : 'Депозит не подтвержден'}
-        linkUrl={`/`}
+        linkUrl={`/lesson?id=f85c93ed-aca4-43d5-a021-d05bbe7a6a2d&lessonNumber="1"&course_id=8bc653d6-30fe-4f2a-b636-285a882c744d&category_id=3879601c-6999-4a8b-9dc6-c5e892a61f33&exercise_id=3117a43a-e4a7-4f1f-b463-3c4d128c55ea&exercisesQuantity="6"&testNumber="1"`}
         linkText={depositSuccess ? 'Продолжить' : 'Попробовать еще раз'}
         setButtonClicked={setButtonClicked}
       />
