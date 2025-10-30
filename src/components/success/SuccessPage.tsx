@@ -1,4 +1,4 @@
-// src/components/SuccessPage.tsx
+// src/components/success/SuccessPage.tsx
 import React, { useState } from 'react';
 import { LinkComponent, ConfettiAnimation } from '@/components';
 import successIcon from '@/assets/images/success.png';
@@ -20,7 +20,6 @@ interface SuccessPageProps {
   helperText?: string;
   successThreshold?: number;
   type?: 'success' | 'failure' | 'noAccess';
-  // for reload test
   exerciseId?: string;
   courseId?: string;
   categoryId?: string;
@@ -38,7 +37,6 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
                                                           helperText,
                                                           successThreshold = 0.6,
                                                           type = 'success',
-                                                          // for reload test
                                                           exerciseId,
                                                           courseId,
                                                           categoryId,
@@ -59,9 +57,8 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
   const getDisplayType = (): 'success' | 'failure' | 'noAccess' => {
     if (type) return type;
     if (text === 'Ошибка регистрации') return 'failure';
-    if (!isRegistration && questions > 0) {
+    if (!isRegistration && questions > 0)
       return scorePercentage >= successThreshold ? 'success' : 'failure';
-    }
     return 'success';
   };
 
@@ -72,7 +69,13 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
   const displayType = getDisplayType();
   const showConfetti = displayType === 'success' && isTestSuccess;
 
-  const goHomeWithRefresh = async () => {
+  /**
+   * 🔄 Перенаправлення на головну:
+   * Якщо `linkUrl === '/'`, то:
+   *   1. Робимо getCourses(), щоб оновити backend/courses.
+   *   2. Потім робимо повне перезавантаження сторінки (window.location.replace('/')).
+   */
+  const goHomeWithRefresh = async (): Promise<void> => {
     if (busy) return;
     setBusy(true);
     try {
@@ -82,12 +85,11 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
         try {
           await getCourses();
         } catch (e) {
-          console.error('getCourses() before home failed:', e);
+          console.error('getCourses() failed before navigating home:', e);
         }
+
         sessionStorage.setItem('mt_force_home_refresh_ts', String(Date.now()));
-        const abs = new URL('/', window.location.origin);
-        abs.searchParams.set('ts', String(Date.now()));
-        window.location.replace(abs.toString());
+        window.location.replace(`/${Date.now()}`); // cache-buster
         return;
       }
 
@@ -95,13 +97,6 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
     } finally {
       setBusy(false);
     }
-  };
-
-  const handleMainClick: React.MouseEventHandler<
-    HTMLAnchorElement | HTMLButtonElement
-  > = (e) => {
-    e.preventDefault();
-    void goHomeWithRefresh();
   };
 
   return (
@@ -117,12 +112,18 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
       {showConfetti && <ConfettiAnimation duration={5000} particleCount={60} />}
 
       <div className="flex flex-col items-center min-h-screen p-4 w-full">
+        {/* X Button */}
         <div className="absolute right-5 top-[calc(9.1rem+var(--safe-top))]">
-          <button className="cursor-pointer" onClick={handleMainClick} disabled={busy}>
+          <button
+            className="cursor-pointer"
+            onClick={() => void goHomeWithRefresh()}
+            disabled={busy}
+          >
             <CrossIcon />
           </button>
         </div>
 
+        {/* Content */}
         <div className="flex flex-col items-center justify-center flex-1">
           <img src={icons[displayType]} alt={displayType} className="w-40 mb-5" />
 
@@ -141,18 +142,17 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
             </>
           )}
 
-          {helperText && (
-            <Body className="text-center text-black">{helperText}</Body>
-          )}
+          {helperText && <Body className="text-center text-black">{helperText}</Body>}
         </div>
 
+        {/* Buttons */}
         <div className="flex flex-col justify-center mb-[40px] w-full ">
           {displayType === 'noAccess' && (
             <LinkComponent
               to={linkUrl}
               className={`w-full ${busy ? 'pointer-events-none opacity-70' : ''}`}
               variant="primary"
-              onClick={handleMainClick}
+              onClick={() => void goHomeWithRefresh()}
             >
               {linkText}
             </LinkComponent>
@@ -163,7 +163,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
               <LinkComponent
                 to={linkUrl}
                 className={`w-full mb-3 ${busy ? 'pointer-events-none opacity-70' : ''}`}
-                onClick={handleMainClick}
+                onClick={() => void goHomeWithRefresh()}
               >
                 <Title variant="h6">{linkText}</Title>
               </LinkComponent>
@@ -173,8 +173,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
                   to={restartTestUrl}
                   variant="secondary"
                   className="w-full bg-[#D1D5DB]"
-                  onClick={(e) => {
-                    // keep SPA for restart
+                  onClick={() => {
                     if (setButtonClicked) setButtonClicked(false);
                   }}
                 >
@@ -191,7 +190,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
               <LinkComponent
                 to={linkUrl}
                 className={`w-full mb-2 ${busy ? 'pointer-events-none opacity-70' : ''}`}
-                onClick={handleMainClick}
+                onClick={() => void goHomeWithRefresh()}
               >
                 <Title variant="h6">{linkText}</Title>
               </LinkComponent>
