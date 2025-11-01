@@ -210,7 +210,7 @@ const LessonPage: React.FC = () => {
   return (
     <>
       <div
-        className="bg-natural-950 min-h-screen rounded p-4 pb-32 pt-[calc(6rem+var(--safe-top))]"
+        className="bg-natural-950 min-h-screen rounded p-4 pb-32 pt-[calc(8rem+var(--safe-top))]"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',
@@ -244,7 +244,7 @@ const LessonPage: React.FC = () => {
             </Body>
           </div>
           <div className="flex items-center gap-2 mb-3">
-            <img src={upperIcon} className="w-10 h-10"></img>
+            <img src={upperIcon} className="size-10 shrink-0 object-contain"></img>
             <Body variant="mdRegular" className="text-light">
               {lessonPoints[1]}
             </Body>
