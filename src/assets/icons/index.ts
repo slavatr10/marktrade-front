@@ -10,3 +10,4 @@ export { default as TestsIcon } from "./TestsIcon";
 export { default as PlayIcon } from "./PlayIcon";
 export { default as CheckmarkIcon } from "./CheckmarkIcon";
 export { default as ChartIcon } from "./ChartIcon";
+export { default as YoutubeIcon } from "./YoutubeIcon";

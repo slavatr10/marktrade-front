@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import LogoIcon from '@/assets/icons/Logo';
 import HomeIcon from '@/assets/icons/Home';
-import MetodichkaIcon from '@/assets/icons/Method';
 import PlatformIcon from '@/assets/icons/Platform';
 import SupportIcon from '@/assets/icons/Support';
 import { Link } from '@tanstack/react-router';
@@ -13,6 +12,7 @@ import classNames from 'classnames';
 import { ROUTES } from '@/constants';
 import supportImg from '@/assets/images/support.png';
 import { Body } from '../typography';
+import YoutubeIcon from "../../assets/icons/YoutubeIcon.tsx";
 
 /** =========================
  *  NavItem (універсальний)
@@ -246,7 +246,7 @@ export const Footer: React.FC = () => {
     <>
       <footer className="fixed bottom-0 left-0 h-[64px]  w-full">
 
-        <div className="relative flex h-full items-center justify-around text-white bg-white">
+        <div className="relative flex h-full items-center justify-around text-white bg-white px-4">
           <button
             onClick={handleClickCommunity}
             className="flex h-[72px] w-[75px] flex-col items-center justify-center text-[#B0B3B8]"
@@ -258,7 +258,7 @@ export const Footer: React.FC = () => {
           </button>
 
           <NavItem to="https://help.sprotrade.com/" label="Стратегии">
-            <MetodichkaIcon />
+            <YoutubeIcon />
           </NavItem>
 
           <Link
