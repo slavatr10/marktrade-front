@@ -148,7 +148,7 @@ export const CategoryItem = React.memo(
                       onLessonClick(lesson, lessonIndex, category);
                     }}
                   >
-                    <div className="relative flex w-[18px] justify-center">
+                    <div className="relative flex w-[18px] self-stretch justify-center">
                       {completed ? (
                         <div className="mt-1 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-black text-white">
                           <svg
@@ -172,7 +172,7 @@ export const CategoryItem = React.memo(
 
                       {/* <span className="absolute left-1/2 top-[22px] -translate-x-1/2 bottom-0 w-[2px] h-[100%]  bg-[#E3E8F3]" /> */}
                       {shouldDrawLine && (
-                        <span className="absolute left-1/2 top-[22px] -translate-x-1/2 bottom-0 w-[2px] h-[100%] bg-[#E3E8F3]" />
+                        <span className="absolute left-1/2 -translate-x-1/2 top-[22px] -bottom-4 w-[2px] bg-[#E3E8F3]" />
                       )}
                     </div>
                     <div className="">
