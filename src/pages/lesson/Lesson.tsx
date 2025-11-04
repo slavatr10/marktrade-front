@@ -18,6 +18,7 @@ import { Body, Title } from '@/components/typography';
 import handsIcon from '@/assets/images/hands-icon.png';
 import upperIcon from '@/assets/images/upper-icon.png';
 import hummerIcon from '@/assets/images/hummer-icon.png';
+import { preloadImages } from '@/utils/preloadImages';
 
 const FIRST_MODULE_ID = 'ac2b5bb0-c5ce-4622-b1da-feb63fecb735';
 const LessonPage: React.FC = () => {
@@ -78,6 +79,9 @@ const LessonPage: React.FC = () => {
         if (foundLesson) {
           setCurrentLesson(foundLesson);
           setCompleted(foundLesson.completed);
+          if (foundLesson.lesson.thumbnail) {
+            await preloadImages([foundLesson.lesson.thumbnail]);
+          }
           setLoadingProgress(100);
           await new Promise(resolve => setTimeout(resolve, 300));
         } else {

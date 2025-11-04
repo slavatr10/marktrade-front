@@ -5,6 +5,7 @@ import { getAuthTelegram } from '@/api/auth';
 import { useSendPulseTag } from '@/hooks/useSendPulse';
 import { ROUTES } from '@/constants';
 import bgImage from '@/assets/images/main-bg.png';
+import welcomeThumbnail from '@/assets/images/welcome-3-thumb.jpg';
 
 import IntroLayout from '@/components/introLayout/introLayout.tsx';
 
@@ -43,8 +44,7 @@ const RegistrationPage = () => {
     const sendPostbackOnLoad = async () => {
       const storedClickId = localStorage.getItem('click_id');
       if (storedClickId) {
-        const postbackUrl =
-          `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/tracker-postback?tracker.event=linksend&clickid=${storedClickId}`;
+        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/tracker-postback?tracker.event=linksend&clickid=${storedClickId}`;
         try {
           await fetch(postbackUrl, { method: 'GET', mode: 'no-cors' });
           console.log("Chatterfy 'linksend' postback відправлено.");
@@ -52,7 +52,9 @@ const RegistrationPage = () => {
           console.error("Помилка Chatterfy 'linksend':", error);
         }
       } else {
-        console.warn("Click ID не знайдено. Chatterfy 'linksend' не відправлено.");
+        console.warn(
+          "Click ID не знайдено. Chatterfy 'linksend' не відправлено."
+        );
       }
     };
     sendPostbackOnLoad();
@@ -131,9 +133,18 @@ const RegistrationPage = () => {
       const response = await getAuthTelegram(userId);
 
       if (response?.data?.user?.registration) {
-        sessionStorage.setItem('access_token', response.data.tokens.accessToken);
-        sessionStorage.setItem('refresh_token', response.data.tokens.refreshToken);
-        localStorage.setItem('contact_id', response?.data?.user?.contactId || '');
+        sessionStorage.setItem(
+          'access_token',
+          response.data.tokens.accessToken
+        );
+        sessionStorage.setItem(
+          'refresh_token',
+          response.data.tokens.refreshToken
+        );
+        localStorage.setItem(
+          'contact_id',
+          response?.data?.user?.contactId || ''
+        );
         localStorage.setItem('isRegister', 'true');
 
         const contactId = response.data.user.contactId;
@@ -167,7 +178,8 @@ const RegistrationPage = () => {
           title="Регистрация на торговой платформе"
           description={`Пора перейти от теории к практике. В этом видео ты узнаешь, как пройти регистрацию на торговой платформе, подтвердить свой аккаунт и выполнить базовые настройки для начала работы.`}
           videoSrc="https://vz-3325699a-726.b-cdn.net/3cfe4f01-391b-4b75-b8e8-b8a121442d32/playlist.m3u8"
-          thumbnail="https://vz-774045bd-680.b-cdn.net/48916f04-c1af-4ab5-9f09-5bc356a6ec91/thumbnail_ee5bdcc0.jpg"
+          //thumbnail="https://vz-774045bd-680.b-cdn.net/48916f04-c1af-4ab5-9f09-5bc356a6ec91/thumbnail_ee5bdcc0.jpg"
+          thumbnail={welcomeThumbnail}
           isActive={true}
           isRegister={true}
           onRegisterCheck={handleRegisterCheckUp}
