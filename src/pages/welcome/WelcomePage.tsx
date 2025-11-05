@@ -155,7 +155,7 @@ const WelcomePage = () => {
         console.warn(
           'Contact ID не знайдено в localStorage. SendPulse Event не відправлено.'
         );
-  
+
         return;
       }
 
@@ -226,7 +226,7 @@ const WelcomePage = () => {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col justify-between bg-natural-950     pt-[calc(6.8rem+var(--safe-top))]  "
+      className="flex min-h-screen w-full flex-col justify-between bg-natural-950     pt-[calc(6.8rem+var(--safe-top))]       md:pt-[calc(4rem+var(--safe-top))]  "
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',

@@ -316,7 +316,8 @@ const MainPage: React.FC = () => {
       <div
         className="
                 p-4 min-h-dvh
-                pt-[calc(6.8rem+var(--safe-top))]  
+                pt-[calc(6.8rem+var(--safe-top))]
+                md:pt-[calc(4rem+var(--safe-top))]  
                 pb-[calc(8rem+var(--safe-bottom))]
               "
         style={{

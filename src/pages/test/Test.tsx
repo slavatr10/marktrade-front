@@ -80,12 +80,12 @@ const TestPage = () => {
 
         setExercise(questions);
         setExercisesQuantity(questions.length);
-        setLoadingProgress(100); 
-        await new Promise(resolve => setTimeout(resolve, 300));
+        setLoadingProgress(100);
+        await new Promise((resolve) => setTimeout(resolve, 300));
       } catch (error) {
         console.error('Помилка завантаження даних тесту:', error);
-        setLoadingProgress(100); 
-        await new Promise(resolve => setTimeout(resolve, 300));
+        setLoadingProgress(100);
+        await new Promise((resolve) => setTimeout(resolve, 300));
       } finally {
         stopLoading();
       }
@@ -241,7 +241,7 @@ const TestPage = () => {
           backgroundPosition: 'center',
         }}
       >
-        <div className="flex-1 overflow-y-auto p-4 pt-[calc(5.1rem+var(--safe-top))]">
+        <div className="flex-1 overflow-y-auto p-4 pt-[calc(5.1rem+var(--safe-top))]      md:pt-[calc(4rem+var(--safe-top))]  ">
           <IntroductionHeader
             type="text"
             title={`Урок №${testNumber}`}

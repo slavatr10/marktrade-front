@@ -214,7 +214,7 @@ const LessonPage: React.FC = () => {
   return (
     <>
       <div
-        className="bg-natural-950 min-h-screen rounded p-4 pb-32 pt-[calc(8.5rem+var(--safe-top))]"
+        className="bg-natural-950 min-h-screen rounded p-4 pb-32 pt-[calc(8.5rem+var(--safe-top))] md:pt-[calc(4rem+var(--safe-top))]"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',
