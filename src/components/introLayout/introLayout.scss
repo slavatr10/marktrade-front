@@ -1,5 +1,4 @@
 :root {
-
   --intro-header-h: 72px;
   --intro-header-mb: 16px;
 }
@@ -23,8 +22,8 @@
 .intro-header__back {
   position: absolute;
   left: 16px;
-  top: 100%;
-  transform: translateY(-50%);
+  // top: 100%;
+  // transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -51,4 +50,21 @@
   margin-top: 30%;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+@media (min-width: 512px) {
+  .intro-main {
+    margin-top: 10%;
+  }
+}
+@media (min-width: 768px) {
+  .intro-header {
+    //padding-top: 5%;
+    padding-top: calc(6.8rem + var(--safe-top));
+  }
+}
+@media (min-width: 1024px) {
+  .intro-main {
+    margin-top: 5%;
+  }
 }
