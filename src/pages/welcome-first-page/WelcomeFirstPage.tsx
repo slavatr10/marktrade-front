@@ -23,7 +23,7 @@ const WelcomeFirstPage = () => {
     const contactId = localStorage.getItem('contact_id');
 
     // -------------------------------------------
-    // GET постбек у Chatterfy (vstyp1) — один раз
+    // GET постбек у Chatterfy (vstyp1) - один раз
     // -------------------------------------------
     const sendChatterfyPostback = async () => {
       if (storedClickId) {
@@ -47,7 +47,7 @@ const WelcomeFirstPage = () => {
     };
 
     // -------------------------------------------
-    // Тег "vstyp1" у SendPulse — один раз
+    // Тег "vstyp1" у SendPulse - один раз
     // -------------------------------------------
     const sendSendPulseTag = async () => {
       if (contactId) {
@@ -172,7 +172,7 @@ const WelcomeFirstPage = () => {
       <IntroLayout title="Знакомство с платформой" backTo="/start">
         <IntroductionContent
           title="Что такое трейдинг: просто о главном"
-          description="Узнай, как работает финансовый рынок и почему трейдинг — это не азарт, а система. Мы разберём, кто такие трейдеры, как они зарабатывают на движении цен и почему каждый человек может освоить этот навык."
+          description="Узнай, как работает финансовый рынок и почему трейдинг - это не азарт, а система. Мы разберём, кто такие трейдеры, как они зарабатывают на движении цен и почему каждый человек может освоить этот навык."
           videoSrc="https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/playlist.m3u8"
           // thumbnail="https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/thumbnail_b9607889.jpg"
           thumbnail={welcomeThumbnail}

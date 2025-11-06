@@ -334,7 +334,10 @@ const MainPage: React.FC = () => {
           Начнём обучение!
         </Body>
 
-        <HorizontalCarousel className="mt-2 !-mx-4 !px-4" onIndexChange={handleSlideChange}>
+        <HorizontalCarousel
+          className="mt-2 !-mx-4 !px-4"
+          onIndexChange={handleSlideChange}
+        >
           {Array.isArray(processedCourses) && processedCourses.length > 0 ? (
             processedCourses.map((course, index) => (
               <div onClick={() => handleCourseClick(course, index)}>
@@ -438,7 +441,7 @@ const MainPage: React.FC = () => {
           onClose={() => setIsSheetOpen(false)}
           title={`Тестирование №${categoryForTest?.exercise?.number}`}
           text1="Пришло время тестирования! Что в этом плохого? Наоборот, давай проверим, насколько хорошо ты усвоил теоретические знания."
-          text2="Когда пройдёшь — сможешь двигаться дальше!"
+          text2="Когда пройдёшь - сможешь двигаться дальше!"
           isTest
           onClick={startTest}
           linkText="Начать тестирование"

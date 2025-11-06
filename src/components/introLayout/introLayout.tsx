@@ -6,17 +6,17 @@ import './introLayout.scss';
 
 interface IntroLayoutProps {
   title?: string;
-  backTo?: string;      // якщо задано — показуємо кнопку «назад»
+  backTo?: string; // якщо задано - показуємо кнопку «назад»
   children: ReactNode;
   className?: string;
 }
 
 export default function IntroLayout({
-                                      title = '',
-                                      backTo,
-                                      children,
-                                      className,
-                                    }: IntroLayoutProps) {
+  title = '',
+  backTo,
+  children,
+  className,
+}: IntroLayoutProps) {
   const navigate = useNavigate();
 
   return (
@@ -44,9 +44,7 @@ export default function IntroLayout({
         )}
       </header>
 
-      <main className="intro-main">
-        {children}
-      </main>
+      <main className="intro-main">{children}</main>
     </div>
   );
 }

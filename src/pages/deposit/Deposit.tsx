@@ -4,8 +4,8 @@ import { Button, LinkComponent, SuccessPage, VideoPlayer } from '@/components';
 import { useSendPulseTag } from '@/hooks/useSendPulse';
 import bgImage from '@/assets/images/main-bg.png';
 import { Body, Title } from '@/components/typography';
-import { ArrowLeft } from "@/assets/icons";
-import { useNavigate } from "@tanstack/react-router";
+import { ArrowLeft } from '@/assets/icons';
+import { useNavigate } from '@tanstack/react-router';
 
 const SENDPULSE_EVENT_FLAG = 'sp_event_136f6be1a25b488afabce0671ab99e9c_sent';
 const spTagFlagKey = (contactId: string) =>
@@ -121,7 +121,7 @@ const DepositPage = () => {
     void sendSendPulseTag();
     void sendChatterfyPostback();
     void sendSendPulseEvent();
-  }, []); // <- ПУСТИЙ масив залежностей — ефект тільки на маунт
+  }, []); // <- ПУСТИЙ масив залежностей - ефект тільки на маунт
 
   const handleVerifyDeposit = async () => {
     setLoadingCheckDeposit(true);
@@ -178,7 +178,7 @@ const DepositPage = () => {
         }}
         className="absolute left-4 top-[104px]"
       >
-        <ArrowLeft svgColor="black" width={18} height={18}/>
+        <ArrowLeft svgColor="black" width={18} height={18} />
       </button>
       <Title variant="h1" className="mb-6 text-[#181717] text-center">
         Депозит на платформе
@@ -194,7 +194,7 @@ const DepositPage = () => {
         </div>
         <div className="flex flex-col gap-6 mb-10">
           <Body variant="mdRegular" className="text-[#323030]">
-            Ты уже сделал главное — решил разобраться в трейдинге. Теперь важно
+            Ты уже сделал главное - решил разобраться в трейдинге. Теперь важно
             перейти к практике. Пополни счёт на платформе, созданный по моей
             ссылке - это подтвердит, что ты в команде, и откроет доступ ко всем
             инструментам

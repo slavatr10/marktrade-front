@@ -119,7 +119,7 @@ const WelcomeSecondPage = () => {
       <IntroLayout title="Знакомство с платформой" backTo="/welcome-first">
         <IntroductionContent
           title="Наша команда и система обучения"
-          description="В этом уроке ты узнаешь, как устроено сообщество Trade University. Мы расскажем, из чего состоит система — обучение, сигналы и поддержка — и как всё это помогает тебе расти шаг за шагом вместе с командой."
+          description="В этом уроке ты узнаешь, как устроено сообщество Trade University. Мы расскажем, из чего состоит система - обучение, сигналы и поддержка - и как всё это помогает тебе расти шаг за шагом вместе с командой."
           videoSrc="https://vz-774045bd-680.b-cdn.net/76894c8b-5722-4dcc-88f3-d54529cd34cf/playlist.m3u8"
           // thumbnail="https://vz-774045bd-680.b-cdn.net/76894c8b-5722-4dcc-88f3-d54529cd34cf/thumbnail_95062995.jpg"
           thumbnail={welcomeThumbnail}
