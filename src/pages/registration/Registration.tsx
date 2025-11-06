@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { SuccessPage } from '@/components';
+import { useEffect, useRef, useState } from 'react';
+import { GlobalLoader, SuccessPage } from '@/components';
 import { IntroductionContent } from '@/components';
 import { getAuthTelegram } from '@/api/auth';
 import { useSendPulseTag } from '@/hooks/useSendPulse';
@@ -16,6 +16,9 @@ const SENDPULSE_EVENT_FLAG = 'sp_event_bb7cbbea9d544af3e93c2ad9c6eb366a_sent';
 const RegistrationPage = () => {
   const [registerSuccess, setRegisterSuccess] = useState<boolean>(false);
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
+  const [isChecking, setIsChecking] = useState<boolean>(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const progressIntervalRef = useRef<number | null>(null);
   const { sendTag } = useSendPulseTag();
   const userId = localStorage.getItem('user_id') || '';
 
@@ -129,6 +132,26 @@ const RegistrationPage = () => {
   }
 
   const handleRegisterCheckUp = async () => {
+    setIsChecking(true);
+    setLoadingProgress(0);
+
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+
+    progressIntervalRef.current = window.setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev >= 99) {
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+          }
+          return 99;
+        }
+
+        return prev + 1;
+      });
+    }, 15);
+    setIsChecking(true);
     try {
       const response = await getAuthTelegram(userId);
 
@@ -160,9 +183,20 @@ const RegistrationPage = () => {
       console.log('Помилка при перевірці реєстрації:', error);
       setRegisterSuccess(false);
     } finally {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+
+      setLoadingProgress(100);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
       setButtonClicked(true);
     }
   };
+
+  if (isChecking) {
+    return <GlobalLoader progress={loadingProgress} />;
+  }
 
   return (
     <div

@@ -46,13 +46,21 @@ const TestPage = () => {
   const [exercise, setExercise] = useState<Question[]>([]);
   const [countQuestion, setCountQuestion] = useState<number>(0);
   const [isAnswerConfirmed, setIsAnswerConfirmed] = useState<boolean>(false);
-  const [nextSuccessLink, setNextSuccessLink] = useState<string>(
-    `/materials?id=${courseId}&openCategory=${categoryId}`
-  );
-  console.log(nextSuccessLink);
+  // const [nextSuccessLink, setNextSuccessLink] = useState<string>(
+  //   `/materials?id=${courseId}&openCategory=${categoryId}`
+  // );
+  // console.log(nextSuccessLink);
   const [answerStatuses, setAnswerStatuses] = useState<{
     [key: number]: AnswerStatus;
   }>({});
+
+  type SubmissionState = 'idle' | 'submitting' | 'complete';
+  const [submissionState, setSubmissionState] =
+    useState<SubmissionState>('idle');
+  const [submissionProgress, setSubmissionProgress] = useState(0);
+  const [finalSuccessLink, setFinalSuccessLink] = useState<string>(
+    `/materials?id=${courseId}`
+  );
 
   const submit = async (question_id: string, answer: string) =>
     await submitAnswer(question_id, { value: answer } as AnswerType);
@@ -154,22 +162,83 @@ const TestPage = () => {
     }));
   };
 
-  useEffect(() => {
-    if (questionNumber > exercisesQuantity) {
-      const submitProgress = async () => {
-        await submitCategoryProgress(categoryId, 100, true);
-        await submitExercisesProgress(exerciseId, true); // Додати цю строку
-      };
-      submitProgress();
-    }
-  }, [questionNumber]);
+  // useEffect(() => {
+  //   if (questionNumber > exercisesQuantity) {
+  //     const submitProgress = async () => {
+  //       await submitCategoryProgress(categoryId, 100, true);
+  //       await submitExercisesProgress(exerciseId, true); // Додати цю строку
+  //     };
+  //     submitProgress();
+  //   }
+  // }, [questionNumber]);
+
+  // useEffect(() => {
+  //   if (questionNumber > exercisesQuantity) {
+  //     const goToNext = async () => {
+  //       try {
+  //         const categories = await getCategoryByCourseId(courseId);
+  //         let nextLink = `/materials?id=${courseId}`;
+  //         if (categories) {
+  //           const currentCategory = categories.find(
+  //             (cat: any) => cat.id === categoryId
+  //           );
+  //           if (currentCategory) {
+  //             const nextCategory = categories.find(
+  //               (cat: any) => cat.order === currentCategory.order + 1
+  //             );
+  //             if (nextCategory) {
+  //               nextLink = `/materials?id=${courseId}&openCategory=${nextCategory.id}`;
+  //             } else {
+  //               const { data: courses } = await axios.get(
+  //                 'https://miniappback.onrender.com/api/courses'
+  //               );
+  //               const currentCourse = courses.find(
+  //                 (c: any) => c.id === courseId
+  //               );
+  //               if (currentCourse) {
+  //                 const nextCourse = courses.find(
+  //                   (c: any) =>
+  //                     c.course_order === currentCourse.course_order + 1
+  //                 );
+  //                 if (nextCourse) {
+  //                   nextLink = `/materials?id=${nextCourse.id}`;
+  //                 }
+  //               }
+  //             }
+  //           }
+  //         }
+  //         setNextSuccessLink(nextLink);
+  //       } catch (e) {
+  //         setNextSuccessLink(`/materials?id=${courseId}`);
+  //       }
+  //     };
+  //     goToNext();
+  //   }
+  // }, [questionNumber]);
+
+  const isTestFinished =
+    !loading && exercisesQuantity > 0 && questionNumber > exercisesQuantity;
 
   useEffect(() => {
-    if (questionNumber > exercisesQuantity) {
-      const goToNext = async () => {
+    if (isTestFinished && submissionState === 'idle') {
+      setSubmissionState('submitting');
+    }
+  }, [isTestFinished, submissionState]);
+
+  useEffect(() => {
+    if (submissionState !== 'submitting') return;
+
+    const runSubmission = async () => {
+      try {
+        setSubmissionProgress(10);
+
+        await submitCategoryProgress(categoryId, 100, true);
+        await submitExercisesProgress(exerciseId, true);
+        setSubmissionProgress(50);
+
+        let nextLink = `/`;
         try {
           const categories = await getCategoryByCourseId(courseId);
-          let nextLink = `/materials?id=${courseId}`;
           if (categories) {
             const currentCategory = categories.find(
               (cat: any) => cat.id === categoryId
@@ -179,7 +248,7 @@ const TestPage = () => {
                 (cat: any) => cat.order === currentCategory.order + 1
               );
               if (nextCategory) {
-                nextLink = `/materials?id=${courseId}&openCategory=${nextCategory.id}`;
+                nextLink = `/`;
               } else {
                 const { data: courses } = await axios.get(
                   'https://miniappback.onrender.com/api/courses'
@@ -193,24 +262,42 @@ const TestPage = () => {
                       c.course_order === currentCourse.course_order + 1
                   );
                   if (nextCourse) {
-                    nextLink = `/materials?id=${nextCourse.id}`;
+                    nextLink = `/`;
                   }
                 }
               }
             }
           }
-          setNextSuccessLink(nextLink);
         } catch (e) {
-          setNextSuccessLink(`/materials?id=${courseId}`);
+          console.error('Не вдалося отримати наступне посилання:', e);
         }
-      };
-      goToNext();
-    }
-  }, [questionNumber]);
+
+        setFinalSuccessLink(nextLink);
+
+        setSubmissionProgress(100);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      } catch (error) {
+        console.error('Помилка під час завершення тесту:', error);
+        setSubmissionProgress(100);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      } finally {
+        setSubmissionState('complete');
+      }
+    };
+
+    runSubmission();
+  }, [submissionState, categoryId, exerciseId, courseId]);
 
   console.log(answers.find((el) => el.isCorrect));
+  // if (loading) {
+  //   return <GlobalLoader progress={loadingProgress} />;
+  // }
   if (loading) {
     return <GlobalLoader progress={loadingProgress} />;
+  }
+
+  if (submissionState === 'submitting') {
+    return <GlobalLoader progress={submissionProgress} />;
   }
 
   if (!loading && exercisesQuantity > 0 && questionNumber > exercisesQuantity) {
@@ -219,7 +306,8 @@ const TestPage = () => {
         text="Тест завершён!"
         rightAnswers={countQuestion}
         questions={exercisesQuantity}
-        linkUrl={'/'}
+        // linkUrl={'/'}
+        linkUrl={finalSuccessLink}
         linkText="Продолжить"
         isRegistration={false}
         exerciseId={exerciseId}
