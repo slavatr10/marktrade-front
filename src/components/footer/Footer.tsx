@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import { ROUTES } from '@/constants';
 import supportImg from '@/assets/images/support.png';
 import { Body } from '../typography';
-import YoutubeIcon from "../../assets/icons/YoutubeIcon.tsx";
+import YoutubeIcon from '../../assets/icons/YoutubeIcon.tsx';
 
 /** =========================
  *  NavItem (універсальний)
@@ -63,7 +63,7 @@ const NavItem: React.FC<NavItemProps> = (props) => {
   const isExternal = /^https?:\/\//i.test(to);
 
   if (isExternal) {
-    // Зовнішній URL — рендеримо <a>
+    // Зовнішній URL - рендеримо <a>
     return (
       <a
         href={to}
@@ -80,7 +80,7 @@ const NavItem: React.FC<NavItemProps> = (props) => {
     );
   }
 
-  // Внутрішній маршрут — TanStack Router <Link>
+  // Внутрішній маршрут - TanStack Router <Link>
   return (
     <Link
       to={to}
@@ -245,7 +245,6 @@ export const Footer: React.FC = () => {
   return (
     <>
       <footer className="fixed bottom-0 left-0 h-[64px]  w-full">
-
         <div className="relative flex h-full items-center justify-around text-white bg-white px-4">
           <button
             onClick={handleClickCommunity}
@@ -307,7 +306,7 @@ export const Footer: React.FC = () => {
         }
         text3={
           communityMode === 'join'
-            ? 'У нас также есть ProTrade Community Plus — расширенный формат с дополнительными возможностями.\nЧтобы присоединиться, достаточно иметь на балансе от 500$. \nДоступ откроется после нажатия кнопки ниже.'
+            ? 'У нас также есть ProTrade Community Plus - расширенный формат с дополнительными возможностями.\nЧтобы присоединиться, достаточно иметь на балансе от 500$. \nДоступ откроется после нажатия кнопки ниже.'
             : undefined
         }
         href={

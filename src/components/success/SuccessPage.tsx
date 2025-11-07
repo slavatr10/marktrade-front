@@ -1,6 +1,6 @@
 // src/components/success/SuccessPage.tsx
-import React, { useState } from 'react';
-import { LinkComponent, ConfettiAnimation } from '@/components';
+import React, { useEffect, useState } from 'react';
+import { LinkComponent, ConfettiAnimation, GlobalLoader } from '@/components';
 import successIcon from '@/assets/images/success.png';
 import failureIcon from '@/assets/images/failure.png';
 import bgImage from '@/assets/images/main-bg.png';
@@ -27,23 +27,26 @@ interface SuccessPageProps {
 }
 
 export const SuccessPage: React.FC<SuccessPageProps> = ({
-                                                          text,
-                                                          rightAnswers = 0,
-                                                          questions = 0,
-                                                          linkUrl,
-                                                          linkText,
-                                                          setButtonClicked,
-                                                          isRegistration = true,
-                                                          helperText,
-                                                          successThreshold = 0.6,
-                                                          type = 'success',
-                                                          exerciseId,
-                                                          courseId,
-                                                          categoryId,
-                                                          testNumber,
-                                                        }) => {
+  text,
+  rightAnswers = 0,
+  questions = 0,
+  linkUrl,
+  linkText,
+  setButtonClicked,
+  isRegistration = true,
+  helperText,
+  successThreshold = 0.6,
+  type = 'success',
+  exerciseId,
+  courseId,
+  categoryId,
+  testNumber,
+}) => {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
+
+  const [isAssetLoading, setIsAssetLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   const scorePercentage = questions > 0 ? rightAnswers / questions : 0;
   const isTestSuccess = !isRegistration && scorePercentage >= successThreshold;
@@ -53,6 +56,40 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
     failure: failureIcon,
     noAccess: failureIcon,
   };
+
+  useEffect(() => {
+    const assetsToLoad = [bgImage, successIcon, failureIcon];
+
+    const totalAssets = assetsToLoad.length;
+    if (totalAssets === 0) {
+      setIsAssetLoading(false);
+      setLoadingProgress(100);
+      return;
+    }
+
+    let loadedCount = 0;
+
+    const itemLoaded = (assetName: string) => {
+      console.log(`Asset loaded: ${assetName}`);
+      loadedCount++;
+      const progress = Math.round((loadedCount / totalAssets) * 100);
+      setLoadingProgress(progress);
+
+      if (loadedCount === totalAssets) {
+        setIsAssetLoading(false);
+      }
+    };
+
+    assetsToLoad.forEach((assetSrc, index) => {
+      const img = new Image();
+      img.onload = () => itemLoaded(`Asset ${index + 1}`);
+      img.onerror = () => {
+        console.error(`Failed to load asset: ${assetSrc}`);
+        itemLoaded(`Asset ${index + 1} (error)`);
+      };
+      img.src = assetSrc as string;
+    });
+  }, []);
 
   const getDisplayType = (): 'success' | 'failure' | 'noAccess' => {
     if (type) return type;
@@ -98,7 +135,9 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
       setBusy(false);
     }
   };
-
+  if (isAssetLoading) {
+    return <GlobalLoader progress={loadingProgress} />;
+  }
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen"
@@ -125,7 +164,11 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
 
         {/* Content */}
         <div className="flex flex-col items-center justify-center flex-1">
-          <img src={icons[displayType]} alt={displayType} className="w-40 mb-5" />
+          <img
+            src={icons[displayType]}
+            alt={displayType}
+            className="w-40 mb-5"
+          />
 
           <Title variant="h1" className="text-[#181717] mb-2">
             {text}
@@ -142,7 +185,9 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
             </>
           )}
 
-          {helperText && <Body className="text-center text-black">{helperText}</Body>}
+          {helperText && (
+            <Body className="text-center text-black">{helperText}</Body>
+          )}
         </div>
 
         {/* Buttons */}
@@ -150,7 +195,9 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
           {displayType === 'noAccess' && (
             <LinkComponent
               to={linkUrl}
-              className={`w-full ${busy ? 'pointer-events-none opacity-70' : ''}`}
+              className={`w-full ${
+                busy ? 'pointer-events-none opacity-70' : ''
+              }`}
               variant="primary"
               onClick={() => void goHomeWithRefresh()}
             >
@@ -162,7 +209,9 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
             <>
               <LinkComponent
                 to={linkUrl}
-                className={`w-full mb-3 ${busy ? 'pointer-events-none opacity-70' : ''}`}
+                className={`w-full mb-3 ${
+                  busy ? 'pointer-events-none opacity-70' : ''
+                }`}
                 onClick={() => void goHomeWithRefresh()}
               >
                 <Title variant="h6">{linkText}</Title>
@@ -189,7 +238,9 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
             <>
               <LinkComponent
                 to={linkUrl}
-                className={`w-full mb-2 ${busy ? 'pointer-events-none opacity-70' : ''}`}
+                className={`w-full mb-2 ${
+                  busy ? 'pointer-events-none opacity-70' : ''
+                }`}
                 onClick={() => void goHomeWithRefresh()}
               >
                 <Title variant="h6">{linkText}</Title>

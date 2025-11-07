@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
-import { SuccessPage } from '@/components';
+import { useEffect, useRef, useState } from 'react';
+import { GlobalLoader, SuccessPage } from '@/components';
 import { IntroductionContent } from '@/components';
 import { getAuthTelegram } from '@/api/auth';
 import { useSendPulseTag } from '@/hooks/useSendPulse';
 import { ROUTES } from '@/constants';
 import bgImage from '@/assets/images/main-bg.png';
+import welcomeThumbnail from '@/assets/images/welcome-3-thumb.jpg';
 
 import IntroLayout from '@/components/introLayout/introLayout.tsx';
 
@@ -15,6 +16,9 @@ const SENDPULSE_EVENT_FLAG = 'sp_event_bb7cbbea9d544af3e93c2ad9c6eb366a_sent';
 const RegistrationPage = () => {
   const [registerSuccess, setRegisterSuccess] = useState<boolean>(false);
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
+  const [isChecking, setIsChecking] = useState<boolean>(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const progressIntervalRef = useRef<number | null>(null);
   const { sendTag } = useSendPulseTag();
   const userId = localStorage.getItem('user_id') || '';
 
@@ -43,8 +47,7 @@ const RegistrationPage = () => {
     const sendPostbackOnLoad = async () => {
       const storedClickId = localStorage.getItem('click_id');
       if (storedClickId) {
-        const postbackUrl =
-          `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/tracker-postback?tracker.event=linksend&clickid=${storedClickId}`;
+        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/tracker-postback?tracker.event=linksend&clickid=${storedClickId}`;
         try {
           await fetch(postbackUrl, { method: 'GET', mode: 'no-cors' });
           console.log("Chatterfy 'linksend' postback відправлено.");
@@ -52,7 +55,9 @@ const RegistrationPage = () => {
           console.error("Помилка Chatterfy 'linksend':", error);
         }
       } else {
-        console.warn("Click ID не знайдено. Chatterfy 'linksend' не відправлено.");
+        console.warn(
+          "Click ID не знайдено. Chatterfy 'linksend' не відправлено."
+        );
       }
     };
     sendPostbackOnLoad();
@@ -127,13 +132,42 @@ const RegistrationPage = () => {
   }
 
   const handleRegisterCheckUp = async () => {
+    setIsChecking(true);
+    setLoadingProgress(0);
+
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+
+    progressIntervalRef.current = window.setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev >= 99) {
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+          }
+          return 99;
+        }
+
+        return prev + 1;
+      });
+    }, 15);
+    setIsChecking(true);
     try {
       const response = await getAuthTelegram(userId);
 
       if (response?.data?.user?.registration) {
-        sessionStorage.setItem('access_token', response.data.tokens.accessToken);
-        sessionStorage.setItem('refresh_token', response.data.tokens.refreshToken);
-        localStorage.setItem('contact_id', response?.data?.user?.contactId || '');
+        sessionStorage.setItem(
+          'access_token',
+          response.data.tokens.accessToken
+        );
+        sessionStorage.setItem(
+          'refresh_token',
+          response.data.tokens.refreshToken
+        );
+        localStorage.setItem(
+          'contact_id',
+          response?.data?.user?.contactId || ''
+        );
         localStorage.setItem('isRegister', 'true');
 
         const contactId = response.data.user.contactId;
@@ -149,9 +183,20 @@ const RegistrationPage = () => {
       console.log('Помилка при перевірці реєстрації:', error);
       setRegisterSuccess(false);
     } finally {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+
+      setLoadingProgress(100);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
       setButtonClicked(true);
     }
   };
+
+  if (isChecking) {
+    return <GlobalLoader progress={loadingProgress} />;
+  }
 
   return (
     <div
@@ -167,7 +212,8 @@ const RegistrationPage = () => {
           title="Регистрация на торговой платформе"
           description={`Пора перейти от теории к практике. В этом видео ты узнаешь, как пройти регистрацию на торговой платформе, подтвердить свой аккаунт и выполнить базовые настройки для начала работы.`}
           videoSrc="https://vz-774045bd-680.b-cdn.net/17771698-9a4e-4c41-91e6-4ad8ff345c0b/playlist.m3u8"
-          thumbnail="https://vz-774045bd-680.b-cdn.net/48916f04-c1af-4ab5-9f09-5bc356a6ec91/thumbnail_ee5bdcc0.jpg"
+          //thumbnail="https://vz-774045bd-680.b-cdn.net/48916f04-c1af-4ab5-9f09-5bc356a6ec91/thumbnail_ee5bdcc0.jpg"
+          thumbnail={welcomeThumbnail}
           isActive={true}
           isRegister={true}
           onRegisterCheck={handleRegisterCheckUp}

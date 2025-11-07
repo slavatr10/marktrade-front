@@ -18,6 +18,7 @@ import { Body, Title } from '@/components/typography';
 import handsIcon from '@/assets/images/hands-icon.png';
 import upperIcon from '@/assets/images/upper-icon.png';
 import hummerIcon from '@/assets/images/hummer-icon.png';
+import { preloadImages } from '@/utils/preloadImages';
 
 const FIRST_MODULE_ID = 'ac2b5bb0-c5ce-4622-b1da-feb63fecb735';
 const LessonPage: React.FC = () => {
@@ -78,6 +79,9 @@ const LessonPage: React.FC = () => {
         if (foundLesson) {
           setCurrentLesson(foundLesson);
           setCompleted(foundLesson.completed);
+          if (foundLesson.lesson.thumbnail) {
+            await preloadImages([foundLesson.lesson.thumbnail]);
+          }
           setLoadingProgress(100);
           await new Promise(resolve => setTimeout(resolve, 300));
         } else {
@@ -210,7 +214,7 @@ const LessonPage: React.FC = () => {
   return (
     <>
       <div
-        className="bg-natural-950 min-h-screen rounded p-4 pb-32 pt-[calc(8.5rem+var(--safe-top))]"
+        className="bg-natural-950 min-h-screen rounded p-4 pb-32 pt-[calc(8.5rem+var(--safe-top))] md:pt-[calc(4rem+var(--safe-top))]"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',

@@ -4,35 +4,104 @@ import logo from '@/assets/images/start-logo.png';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { GlobalLoader } from '@/components';
+import welcomeVideoThumbnail from '@/assets/images/welcome-1-thumb.jpg';
+import { useSendPulseTag } from '@/hooks/useSendPulse';
 
 import './StartPage.scss';
-import { getAuthTelegram } from "@/api/auth.ts";
+import { getAuthTelegram } from '@/api/auth.ts';
+import { preloadImages } from '@/utils/preloadImages';
 
 const StartPage = () => {
   const navigate = useNavigate();
+  const { sendTag } = useSendPulseTag();
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const animationIntervalRef = useRef<number | null>(null);
-  const handleJoinClick = async () => {
-    const userId = localStorage.getItem('user_id') || '';
-    try {
-      const res = await getAuthTelegram(userId);
-      const registered = !!res?.data?.user?.registration;
 
-      if (registered) {
-        localStorage.setItem('isRegister', 'true');
-        navigate({ to: '/' });
-      } else {
-        localStorage.removeItem('isRegister');
-        navigate({ to: '/welcome-first' });
+  const handleJoinClick = async () => {
+    setIsLoading(true);
+    setLoadingProgress(0);
+
+    if (animationIntervalRef.current) {
+      clearInterval(animationIntervalRef.current);
+    }
+    animationIntervalRef.current = window.setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev < 90) {
+          return prev + 5;
+        } else {
+          if (animationIntervalRef.current)
+            clearInterval(animationIntervalRef.current);
+          return 90;
+        }
+      });
+    }, 50);
+
+    const assetsToPreload = [bgImage, welcomeVideoThumbnail];
+
+    const apiCall = getAuthTelegram(localStorage.getItem('user_id') || '');
+    const preloadCall = preloadImages(assetsToPreload);
+
+    let apiResult;
+    let apiError = null;
+
+    try {
+      apiResult = await apiCall;
+    } catch (error) {
+      apiError = error;
+      console.error('Помилка API під час перевірки реєстрації:', error);
+    }
+    await preloadCall;
+    if (animationIntervalRef.current) {
+      clearInterval(animationIntervalRef.current);
+    }
+    setLoadingProgress(100);
+
+    let destination: string;
+    if (!apiError && apiResult?.data?.user?.registration) {
+      sessionStorage.setItem('access_token', apiResult.data.tokens.accessToken);
+      sessionStorage.setItem(
+        'refresh_token',
+        apiResult.data.tokens.refreshToken
+      );
+      localStorage.setItem(
+        'contact_id',
+        apiResult?.data?.user?.contactId || ''
+      );
+      localStorage.setItem('isRegister', 'true');
+
+      const contactId = apiResult.data.user.contactId;
+      if (contactId) {
+        try {
+          await sendTag(contactId, ['regdone']);
+        } catch (tagError) {
+          console.error(
+            "Помилка відправки тегу 'regdone' зі StartPage:",
+            tagError
+          );
+        }
       }
-    } catch {
+
+      destination = '/';
+    }
+    // if (!apiError && apiResult?.data?.user?.registration) {
+    //   localStorage.setItem('isRegister', 'true');
+    //   destination = '/';
+    // }
+    else if (!apiError) {
+      localStorage.removeItem('isRegister');
+      destination = '/welcome-first';
+    } else {
       if (localStorage.getItem('isRegister')) {
-        navigate({ to: '/' });
+        destination = '/';
       } else {
-        navigate({ to: '/welcome-first' });
+        destination = '/welcome-first';
       }
     }
+
+    setTimeout(() => {
+      navigate({ to: destination });
+    }, 100);
   };
 
   useEffect(() => {
@@ -51,7 +120,6 @@ const StartPage = () => {
       }, 100);
     };
 
-    // Плавна анімація до 99%
     animationIntervalRef.current = window.setInterval(() => {
       setLoadingProgress((prev) => {
         if (prev < 99) {
@@ -116,12 +184,15 @@ const StartPage = () => {
           <div className="flex justify-center mb-8">
             <img src={logo} className="w-70 h-70"></img>
           </div>
-          <Title variant="display" className="text-[#181717] mb-2 text-fade-mask main-title">
+          <Title
+            variant="display"
+            className="text-[#181717] mb-2 text-fade-mask main-title"
+          >
             TRADE UNIVERSITY
           </Title>
           <Body variant="mdMedium" className="text-light mb-8">
-            Начни свой путь в трейдинге с поддержкой команды. Обучение, сообщество
-            и реальные результаты — всё в одном месте.
+            Начни свой путь в трейдинге с поддержкой команды. Обучение,
+            сообщество и реальные результаты - всё в одном месте.
           </Body>
         </div>
         <button

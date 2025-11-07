@@ -21,19 +21,19 @@ interface IntroductionContentProps {
 }
 
 export const IntroductionContent = ({
-                                      title,
-                                      description,
-                                      videoSrc,
-                                      thumbnail,
-                                      headerIcon,
-                                      isActive,
-                                      isRegister,
-                                      onRegisterCheck,
-                                      index,
-                                      totalItems,
-                                      onNext,
-                                      showNextButton = true,
-                                    }: IntroductionContentProps) => {
+  title,
+  description,
+  videoSrc,
+  thumbnail,
+  headerIcon,
+  isActive,
+  isRegister,
+  onRegisterCheck,
+  index,
+  totalItems,
+  onNext,
+  showNextButton = true,
+}: IntroductionContentProps) => {
   const handleRegisterClick = () => {
     // Базова URL-адреса
     let url =
@@ -56,30 +56,28 @@ export const IntroductionContent = ({
   };
 
   return (
-    // ⚠️ без внутрішніх px-4 — сітку дає IntroLayout
+    // ⚠️ без внутрішніх px-4 - сітку дає IntroLayout
     <div className="w-full flex flex-col rounded-[20px]">
       <div className="flex gap-1 items-center mb-[8px]">
-        {headerIcon ? <img src={headerIcon} alt="" width={20} height={20} /> : null}
-        <Title className="text-[#181717] sub-title-text">
-          {title}
-        </Title>
+        {headerIcon ? (
+          <img src={headerIcon} alt="" width={20} height={20} />
+        ) : null}
+        <Title className="text-[#181717] sub-title-text">{title}</Title>
       </div>
 
-      <Body className="text-[#323030] description-text">
-        {description}
-      </Body>
+      <Body className="text-[#323030] description-text">{description}</Body>
 
       {isActive && (
         <div
-          className={`w-full rounded-2xl ${isRegister ? 'mb-4' : ''} video-player ${
-            isRegister ? 'player--register' : ''
-          }`}
+          className={`w-full rounded-2xl ${
+            isRegister ? 'mb-4' : ''
+          } video-player ${isRegister ? 'player--register' : ''}`}
         >
           <VideoPlayer src={videoSrc} thumbnail={thumbnail} />
         </div>
       )}
 
-      {/* Кнопка «Следующий урок» — тільки якщо не режим регистрации і є наступний урок */}
+      {/* Кнопка «Следующий урок» - тільки якщо не режим регистрации і є наступний урок */}
       {showNextButton && isActive && !isRegister && index < totalItems - 1 && (
         <div className="mt-4">
           <Button
@@ -94,7 +92,7 @@ export const IntroductionContent = ({
       {/* Режим реєстрації: 2 кнопки, з вирівняними відступами */}
       {isRegister && isActive && (
         <div className="flex w-full flex-col items-center">
-          {/* 1) Перша кнопка — на одному рівні, як на інших сторінках */}
+          {/* 1) Перша кнопка - на одному рівні, як на інших сторінках */}
           <div className="w-full mt-4">
             <Button
               title="Регистрация"
@@ -104,7 +102,7 @@ export const IntroductionContent = ({
             />
           </div>
 
-          {/* 2) Друга кнопка — нижче, з додатковим простором внизу */}
+          {/* 2) Друга кнопка - нижче, з додатковим простором внизу */}
           <div className="w-full mt-3 mb-6">
             <Button
               title="Проверить регистрацию"
