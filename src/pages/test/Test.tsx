@@ -489,7 +489,7 @@ const TestPage = () => {
         onClose={() => setIsExplanationOpen(false)}
         title="Объяснение"
         text1={answers.find((el) => el.isCorrect)?.explanation}
-        href="https://t.me/SashaPT_CEO"
+        href="https://t.me/mark_TU7"
         linkText="Закрыть"
         headerImg={explanationImg}
       />

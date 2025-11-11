@@ -233,7 +233,8 @@ export const Footer: React.FC = () => {
 
   const depositLink = (() => {
     const cid = localStorage.getItem('click_id') || '';
-    return `https://u3.shortink.io/register?utm_campaign=802555&utm_source=affiliate&utm_medium=sr&a=jy9IGDHoNUussf&ac=bot-protrd&code=YRL936${
+
+    return `https://u3.shortink.io/register?utm_campaign=830101&utm_source=affiliate&utm_medium=sr&a=6FAzs5MiTwk2Cf&ac=mark-trade&code=ZFV117${
       cid ? `&click_id=${encodeURIComponent(cid)}` : ''
     }`;
   })();
@@ -256,7 +257,10 @@ export const Footer: React.FC = () => {
             </Body>
           </button>
 
-          <NavItem to="https://help.sprotrade.com/" label="Стратегии">
+          <NavItem
+            to="https://youtube.com/@universitytrade?si=cyV44XMPTtbsJHp2"
+            label="Стратегии"
+          >
             <YoutubeIcon />
           </NavItem>
 
@@ -282,7 +286,7 @@ export const Footer: React.FC = () => {
         onClose={() => setIsSupportOpen(false)}
         title="Поддержка"
         text1="Если у тебя остались вопросы или что-то непонятно - напиши мне"
-        href="https://t.me/SashaPT_CEO"
+        href="https://t.me/mark_TU7"
         linkText="Написать"
         headerImg={supportImg}
       />

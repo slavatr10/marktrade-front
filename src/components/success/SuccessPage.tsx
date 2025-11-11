@@ -24,6 +24,7 @@ interface SuccessPageProps {
   courseId?: string;
   categoryId?: string;
   testNumber?: number;
+  onClose?: () => void;
 }
 
 export const SuccessPage: React.FC<SuccessPageProps> = ({
@@ -41,6 +42,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
   courseId,
   categoryId,
   testNumber,
+  onClose,
 }) => {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
@@ -155,7 +157,18 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
         <div className="absolute right-5 top-[calc(9.1rem+var(--safe-top))]">
           <button
             className="cursor-pointer"
-            onClick={() => void goHomeWithRefresh()}
+            // onClick={() => void goHomeWithRefresh()}
+            onClick={() => {
+              if (linkUrl === '/registration') {
+                if (onClose) {
+                  onClose();
+                  return;
+                }
+                if (setButtonClicked) setButtonClicked(false);
+                return;
+              }
+              void goHomeWithRefresh();
+            }}
             disabled={busy}
           >
             <CrossIcon />
@@ -241,13 +254,23 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({
                 className={`w-full mb-2 ${
                   busy ? 'pointer-events-none opacity-70' : ''
                 }`}
-                onClick={() => void goHomeWithRefresh()}
+                onClick={() => {
+                  if (linkUrl === '/registration') {
+                    if (onClose) {
+                      onClose();
+                      return;
+                    }
+                    if (setButtonClicked) setButtonClicked(false);
+                    return;
+                  }
+                  void goHomeWithRefresh();
+                }}
               >
                 <Title variant="h6">{linkText}</Title>
               </LinkComponent>
 
               <LinkComponent
-                to="https://t.me/SashaPT_CEO"
+                to="https://t.me/mark_TU7"
                 className="w-full z-20"
                 variant="secondary"
                 onClick={() => {
