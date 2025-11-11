@@ -7,7 +7,7 @@ import { Body, Title } from '@/components/typography';
 import { ArrowLeft } from '@/assets/icons';
 import { useNavigate } from '@tanstack/react-router';
 
-const SENDPULSE_EVENT_FLAG = 'sp_event_136f6be1a25b488afabce0671ab99e9c_sent';
+// const SENDPULSE_EVENT_FLAG = 'sp_event_136f6be1a25b488afabce0671ab99e9c_sent';
 const spTagFlagKey = (contactId: string) =>
   `sp_tag_readytodep_sent:${contactId}`;
 const chatterfyFlagKey = (clickId: string) =>
@@ -63,7 +63,7 @@ const DepositPage = () => {
         return;
       }
       const postbackUrl =
-        `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/` +
+        `https://api.chatterfy.ai/api/postbacks/f605fba2-697b-4a32-88f8-5cda8d515b91/` +
         `tracker-postback?tracker.event=readytodep&clickid=${encodeURIComponent(
           storedClickId
         )}`;
@@ -77,50 +77,50 @@ const DepositPage = () => {
     };
 
     // --- SendPulse Events POST (already one-time per contact) ---
-    const sendSendPulseEvent = async () => {
-      if (!contactId) {
-        console.warn('No contactId. Skipping SendPulse Event.');
-        return;
-      }
-      const flagKey = `${SENDPULSE_EVENT_FLAG}:${contactId}`;
-      if (localStorage.getItem(flagKey)) {
-        console.info('SendPulse Event already sent. Skipping.');
-        return;
-      }
-
-      const url =
-        'https://events.sendpulse.com/events/id/136f6be1a25b488afabce0671ab99e9c/8940703';
-      const payload = {
-        email: 'sukomyzukrainy@proton.me',
-        chatbots_channel: 'tg',
-        chatbots_subscriber_id: contactId,
-        event_date: new Date().toISOString(),
-      };
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-      try {
-        await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          signal: controller.signal,
-          // mode: "no-cors", // розкоментувати тільки якщо справді впирається у CORS
-        });
-        localStorage.setItem(flagKey, '1');
-        console.log('SendPulse Event POST sent once.');
-      } catch (error) {
-        console.error('SendPulse Event POST error:', error);
-      } finally {
-        clearTimeout(timeoutId);
-      }
-    };
+    // const sendSendPulseEvent = async () => {
+    //   if (!contactId) {
+    //     console.warn('No contactId. Skipping SendPulse Event.');
+    //     return;
+    //   }
+    //   const flagKey = `${SENDPULSE_EVENT_FLAG}:${contactId}`;
+    //   if (localStorage.getItem(flagKey)) {
+    //     console.info('SendPulse Event already sent. Skipping.');
+    //     return;
+    //   }
+    //
+    //   const url =
+    //     'https://events.sendpulse.com/events/id/136f6be1a25b488afabce0671ab99e9c/8940703';
+    //   const payload = {
+    //     email: 'sukomyzukrainy@proton.me',
+    //     chatbots_channel: 'tg',
+    //     chatbots_subscriber_id: contactId,
+    //     event_date: new Date().toISOString(),
+    //   };
+    //
+    //   const controller = new AbortController();
+    //   const timeoutId = setTimeout(() => controller.abort(), 8000);
+    //
+    //   try {
+    //     await fetch(url, {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify(payload),
+    //       signal: controller.signal,
+    //       // mode: "no-cors", // розкоментувати тільки якщо справді впирається у CORS
+    //     });
+    //     localStorage.setItem(flagKey, '1');
+    //     console.log('SendPulse Event POST sent once.');
+    //   } catch (error) {
+    //     console.error('SendPulse Event POST error:', error);
+    //   } finally {
+    //     clearTimeout(timeoutId);
+    //   }
+    // };
 
     // запускаємо паралельно, але незалежно
     void sendSendPulseTag();
     void sendChatterfyPostback();
-    void sendSendPulseEvent();
+    // void sendSendPulseEvent();
   }, []); // <- ПУСТИЙ масив залежностей - ефект тільки на маунт
 
   const handleVerifyDeposit = async () => {

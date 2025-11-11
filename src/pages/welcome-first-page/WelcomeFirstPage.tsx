@@ -13,7 +13,7 @@ import './WelcomeFirstPage.scss';
 // Оголошуємо ключі для localStorage, щоб уникнути помилок
 const CHATTERFY_POSTBACK_FLAG = 'chatterfy_vstyp1_postback_sent';
 const SENDPULSE_TAG_FLAG = 'sendpulse_vstyp1_tag_sent';
-const SENDPULSE_EVENT_FLAG = 'sp_event_4edc2ef573b946fdefa7ada4749fee0c_sent';
+// const SENDPULSE_EVENT_FLAG = 'sp_event_4edc2ef573b946fdefa7ada4749fee0c_sent';
 
 const WelcomeFirstPage = () => {
   const { sendTag } = useSendPulseTag();

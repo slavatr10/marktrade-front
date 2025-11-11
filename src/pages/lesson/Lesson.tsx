@@ -142,7 +142,7 @@ const LessonPage: React.FC = () => {
       // Перевіряємо, чи номер уроку знаходиться в діапазоні 1-5
       if (storedClickId && lessonOrder >= 1 && lessonOrder <= 5) {
         const chatterfyEvent = `lesson${lessonOrder}`; // Формуємо назву події (lesson1, lesson2, ...)
-        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/tracker-postback?tracker.event=${chatterfyEvent}&clickid=${storedClickId}`;
+        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/f605fba2-697b-4a32-88f8-5cda8d515b91/tracker-postback?tracker.event=${chatterfyEvent}&clickid=${storedClickId}`;
         try {
           await fetch(postbackUrl, {
             method: 'GET',

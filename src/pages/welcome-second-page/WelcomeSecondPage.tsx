@@ -36,7 +36,7 @@ const WelcomeSecondPage = () => {
       }
 
       if (storedClickId) {
-        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/tracker-postback?tracker.event=vstyp2&clickid=${storedClickId}`;
+        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/f605fba2-697b-4a32-88f8-5cda8d515b91/tracker-postback?tracker.event=vstyp2&clickid=${storedClickId}`;
         try {
           await fetch(postbackUrl, { method: 'GET', mode: 'no-cors' });
           // Встановлюємо прапор після успішної відправки
