@@ -10,6 +10,9 @@ import welcomeThumbnailNext from '@/assets/images/welcome-2-thumb.jpg';
 import { preloadImages } from '@/utils/preloadImages';
 import './WelcomeFirstPage.scss';
 
+// Оголошуємо ключі для localStorage, щоб уникнути помилок
+const CHATTERFY_POSTBACK_FLAG = 'chatterfy_vstyp1_postback_sent';
+const SENDPULSE_TAG_FLAG = 'sendpulse_vstyp1_tag_sent';
 const SENDPULSE_EVENT_FLAG = 'sp_event_4edc2ef573b946fdefa7ada4749fee0c_sent';
 
 const WelcomeFirstPage = () => {
@@ -18,6 +21,7 @@ const WelcomeFirstPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const animationIntervalRef = useRef<number | null>(null);
+
   useEffect(() => {
     const storedClickId = localStorage.getItem('click_id');
     const contactId = localStorage.getItem('contact_id');
@@ -26,10 +30,18 @@ const WelcomeFirstPage = () => {
     // GET постбек у Chatterfy (vstyp1) - один раз
     // -------------------------------------------
     const sendChatterfyPostback = async () => {
+      // Перевіряємо, чи був вже відправлений postback
+      if (localStorage.getItem(CHATTERFY_POSTBACK_FLAG)) {
+        console.log("Chatterfy 'vstyp1' postback вже було відправлено раніше. Пропускаю.");
+        return;
+      }
+
       if (storedClickId) {
-        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/tracker-postback?tracker.event=vstyp1&clickid=${storedClickId}`;
+        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/f605fba2-697b-4a32-88f8-5cda8d515b91/tracker-postback?tracker.event=vstyp1&clickid=${storedClickId}`;
         try {
           await fetch(postbackUrl, { method: 'GET', mode: 'no-cors' });
+          // Встановлюємо прапор після успішної відправки
+          localStorage.setItem(CHATTERFY_POSTBACK_FLAG, '1');
           console.log(
             "Chatterfy 'vstyp1' postback відправлено успішно (одноразово)."
           );
@@ -50,9 +62,17 @@ const WelcomeFirstPage = () => {
     // Тег "vstyp1" у SendPulse - один раз
     // -------------------------------------------
     const sendSendPulseTag = async () => {
+      // Перевіряємо, чи був вже відправлений тег
+      if (localStorage.getItem(SENDPULSE_TAG_FLAG)) {
+          console.log("SendPulse тег 'vstyp1' вже було відправлено раніше. Пропускаю.");
+          return;
+      }
+
       if (contactId) {
         try {
           await sendTag(contactId, ['vstyp1']);
+          // Встановлюємо прапор після успішної відправки
+          localStorage.setItem(SENDPULSE_TAG_FLAG, '1');
           console.log(
             "SendPulse тег 'vstyp1' відправлено успішно (одноразово) для contactId:",
             contactId
@@ -71,58 +91,57 @@ const WelcomeFirstPage = () => {
     };
 
     // -------------------------------------------
-    // Одноразовий POST у SendPulse EVENTS при завантаженні
+    // Одноразовий POST у SendPulse EVENTS при завантаженні (ваш оригінальний код)
     // -------------------------------------------
-    const sendSendPulseEvent = async () => {
-      if (!contactId) {
-        console.warn(
-          'Contact ID не знайдено в localStorage. SendPulse Event не відправлено.'
-        );
-        return;
-      }
+    // const sendSendPulseEvent = async () => {
+    //   if (!contactId) {
+    //     console.warn(
+    //       'Contact ID не знайдено в localStorage. SendPulse Event не відправлено.'
+    //     );
+    //     return;
+    //   }
 
-      const flagKey = `${SENDPULSE_EVENT_FLAG}:${contactId}`;
-      if (localStorage.getItem(flagKey)) {
-        console.info('SendPulse Event вже було відправлено раніше. Пропускаю.');
-        return;
-      }
+    //   const flagKey = `${SENDPULSE_EVENT_FLAG}:${contactId}`;
+    //   if (localStorage.getItem(flagKey)) {
+    //     console.info('SendPulse Event вже було відправлено раніше. Пропускаю.');
+    //     return;
+    //   }
 
-      const url =
-        'https://events.sendpulse.com/events/id/4edc2ef573b946fdefa7ada4749fee0c/8940703';
-      const payload = {
-        email: 'sukomyzukrainy@proton.me',
-        chatbots_channel: 'tg',
-        chatbots_subscriber_id: contactId,
-        event_date: new Date().toISOString(),
-      };
+    //   const url =
+    //     'https://events.sendpulse.com/events/id/4edc2ef573b946fdefa7ada4749fee0c/8940703';
+    //   const payload = {
+    //     email: 'sukomyzukrainy@proton.me',
+    //     chatbots_channel: 'tg',
+    //     chatbots_subscriber_id: contactId,
+    //     event_date: new Date().toISOString(),
+    //   };
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
+    //   const controller = new AbortController();
+    //   const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-      try {
-        await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          signal: controller.signal,
-          // mode: 'no-cors',
-        });
+    //   try {
+    //     await fetch(url, {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify(payload),
+    //       signal: controller.signal,
+    //     });
 
-        localStorage.setItem(flagKey, '1');
-        console.log(
-          'SendPulse Event (POST) відправлено успішно (одноразово) для contactId:',
-          contactId
-        );
-      } catch (error) {
-        console.error('Помилка при відправці SendPulse Event (POST):', error);
-      } finally {
-        clearTimeout(timeoutId);
-      }
-    };
+    //     localStorage.setItem(flagKey, '1');
+    //     console.log(
+    //       'SendPulse Event (POST) відправлено успішно (одноразово) для contactId:',
+    //       contactId
+    //     );
+    //   } catch (error) {
+    //     console.error('Помилка при відправці SendPulse Event (POST):', error);
+    //   } finally {
+    //     clearTimeout(timeoutId);
+    //   }
+    // };
 
     sendChatterfyPostback();
     sendSendPulseTag();
-    sendSendPulseEvent();
+    // sendSendPulseEvent();
   }, [sendTag]);
 
   const handleNextPageClick = async () => {
@@ -174,12 +193,10 @@ const WelcomeFirstPage = () => {
           title="Что такое трейдинг: просто о главном"
           description="Узнай, как работает финансовый рынок и почему трейдинг - это не азарт, а система. Мы разберём, кто такие трейдеры, как они зарабатывают на движении цен и почему каждый человек может освоить этот навык."
           videoSrc="https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/playlist.m3u8"
-          // thumbnail="https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/thumbnail_b9607889.jpg"
           thumbnail={welcomeThumbnail}
           isActive={true}
           index={0}
           totalItems={2}
-          // onNext={() => navigate({ to: '/welcome-second' })}
           onNext={handleNextPageClick}
           showNextButton={true}
         />
