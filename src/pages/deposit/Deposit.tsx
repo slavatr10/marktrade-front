@@ -157,7 +157,7 @@ const DepositPage = () => {
   const buildDepositUrl = () => {
     const cid = localStorage.getItem('click_id') || '';
     const base =
-      'https://u3.shortink.io/register?utm_campaign=802555&utm_source=affiliate&utm_medium=sr&a=jy9IGDHoNUussf&ac=bot-protrd&code=YRL936';
+      'https://u3.shortink.io/register?utm_campaign=830101&utm_source=affiliate&utm_medium=sr&a=6FAzs5MiTwk2Cf&ac=mark-trade&code=ZFV117';
     return cid ? `${base}&click_id=${encodeURIComponent(cid)}` : base;
   };
 

@@ -13,15 +13,15 @@
 }
 
 .video-player {
-  margin-bottom: 30%;
+  margin-bottom: 0.5rem;
 }
-@media(min-width: 512px){
-  .video-player{
-    margin-bottom: 10%;
-  }
-}
-@media(min-width: 1024px){
-  .video-player{
-    margin-bottom: 5%;
-  }
-}
+// @media (min-width: 512px) {
+//   .video-player {
+//     margin-bottom: 3%;
+//   }
+// }
+// @media (min-width: 1024px) {
+//   .video-player {
+//     margin-bottom: 3%;
+//   }
+// }

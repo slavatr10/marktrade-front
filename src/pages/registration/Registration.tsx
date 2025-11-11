@@ -118,7 +118,7 @@ const RegistrationPage = () => {
       <SuccessPage
         type={registerSuccess ? 'success' : 'failure'}
         text={registerSuccess ? 'Регистрация успешна' : 'Ошибка регистрации'}
-        linkUrl={registerSuccess ? ROUTES.HOME : '/welcome-first'}
+        linkUrl={registerSuccess ? ROUTES.HOME : '/registration'}
         linkText={registerSuccess ? 'Продолжить' : 'Повторить'}
         setButtonClicked={setButtonClicked}
         isRegistration
@@ -127,6 +127,15 @@ const RegistrationPage = () => {
             ? ''
             : 'что-то пошло не так, попробуйте еще раз или напишите мне'
         }
+        onClose={() => {
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+            progressIntervalRef.current = null;
+          }
+          setIsChecking(false);
+          setLoadingProgress(0);
+          setButtonClicked(false);
+        }}
       />
     );
   }

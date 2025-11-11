@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
       <SuccessPage
         type="noAccess"
         text="У Вас нет доступа"
-        linkUrl="https://t.me/SashaPT_CEO"
+        linkUrl="https://t.me/mark_TU7"
         linkText="Написать"
         helperText="напишите нам, чтобы получить доступ к приложению"
         setButtonClicked={resetNoAccess}
