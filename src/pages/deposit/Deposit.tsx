@@ -189,7 +189,7 @@ const DepositPage = () => {
             src={
               'https://iframe.mediadelivery.net/play/511840/6ae24a8c-62f7-4044-b181-92ab1c95d8dc'
             }
-            thumbnail={'https://spro-trade.b-cdn.net/EDU3/v1.jpg'}
+            thumbnail={'https://vz-774045bd-680.b-cdn.net/c43f0684-dddd-4b58-98be-e0e7767005bc/thumbnail_da032d7c.jpg'}
           />
         </div>
         <div className="flex flex-col gap-6 mb-10">
