@@ -187,7 +187,7 @@ const DepositPage = () => {
         <div className={`w-full rounded-2xl mb-8`}>
           <VideoPlayer
             src={
-              'https://iframe.mediadelivery.net/play/511840/6ae24a8c-62f7-4044-b181-92ab1c95d8dc'
+              'https://vz-774045bd-680.b-cdn.net/70212ec7-574a-49b7-8a10-cc7bc606f043/playlist.m3u8'
             }
             thumbnail={'https://vz-774045bd-680.b-cdn.net/c43f0684-dddd-4b58-98be-e0e7767005bc/thumbnail_da032d7c.jpg'}
           />
