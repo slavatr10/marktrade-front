@@ -40,7 +40,7 @@ const StartPage = () => {
     const assetsToPreload = [bgImage, welcomeVideoThumbnail];
 
     const apiCall = getAuthTelegram(localStorage.getItem('user_id') || '');
-    const preloadCall = preloadImages(assetsToPreload);
+    void preloadImages(assetsToPreload);
 
     let apiResult;
     let apiError = null;
@@ -51,7 +51,6 @@ const StartPage = () => {
       apiError = error;
       console.error('Помилка API під час перевірки реєстрації:', error);
     }
-    await preloadCall;
     if (animationIntervalRef.current) {
       clearInterval(animationIntervalRef.current);
     }
