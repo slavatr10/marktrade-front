@@ -1,19 +1,19 @@
-import { useRef, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 
-import IntroLayout from '@/components/introLayout/introLayout.tsx';
-import { GlobalLoader, IntroductionContent } from '@/components';
-import { useWelcomeTracking } from '@/hooks';
-import bgImage from '@/assets/images/main-bg.png';
-import welcomeThumbnail from '@/assets/images/welcome-1-thumb.jpg';
-import welcomeThumbnailNext from '@/assets/images/welcome-2-thumb.jpg';
-import { preloadImages } from '@/utils/preloadImages';
-import './WelcomeFirstPage.scss';
+import IntroLayout from "@/components/introLayout/introLayout.tsx";
+import { GlobalLoader, IntroductionContent } from "@/components";
+import { useWelcomeTracking } from "@/hooks";
+import bgImage from "@/assets/images/main-bg.png";
+import welcomeThumbnail from "@/assets/images/welcome-1-thumb.jpg";
+import welcomeThumbnailNext from "@/assets/images/welcome-2-thumb.jpg";
+import { preloadImages } from "@/utils/preloadImages";
+import "./WelcomeFirstPage.scss";
 
 const WelcomeFirstPage = () => {
   useWelcomeTracking({
-    chatterfyEvent: 'vstyp1',
-    sendPulseTag: 'vstyp1',
+    chatterfyEvent: "vstyp1",
+    sendPulseTag: "vstyp1",
   });
 
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ const WelcomeFirstPage = () => {
     setLoadingProgress(100);
 
     setTimeout(() => {
-      navigate({ to: '/welcome-second' });
+      navigate({ to: "/welcome-second" });
     }, 100);
   };
 
@@ -60,12 +60,12 @@ const WelcomeFirstPage = () => {
     <div
       style={{
         backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
       }}
     >
-      <IntroLayout title="Знакомство с платформой" backTo="/start">
+      <IntroLayout title="Знакомство с платформой">
         <IntroductionContent
           title="Что такое трейдинг: просто о главном"
           description="Узнай, как работает финансовый рынок и почему трейдинг - это не азарт, а система. Мы разберём, кто такие трейдеры, как они зарабатывают на движении цен и почему каждый человек может освоить этот навык."

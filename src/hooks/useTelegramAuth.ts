@@ -101,7 +101,7 @@ const handleAuthResponse = async (
           response.data?.clickId || "",
           String(response.data?.contactId || ""),
         );
-        navigate({ to: "/start" });
+        navigate({ to: "/welcome-first" });
         return "welcome";
       default:
         return "error";

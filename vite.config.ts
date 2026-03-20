@@ -38,7 +38,7 @@ const ALLOWED_HOSTS = [
   "localhost",
   "127.0.0.1",
   ".ngrok-free.app",
-  "etsuko-preirrigational-candice.ngrok-free.dev",
+  ".ngrok-free.dev",
 ];
 
 export default defineConfig(({ mode }) => {
