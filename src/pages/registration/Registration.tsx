@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { GlobalLoader, SuccessPage } from '@/components';
 import { IntroductionContent } from '@/components';
 import { getAuthTelegram } from '@/api/auth';
@@ -6,6 +6,7 @@ import { useSendPulseTag } from '@/hooks/useSendPulse';
 import { ROUTES } from '@/constants';
 import bgImage from '@/assets/images/main-bg.png';
 import welcomeThumbnail from '@/assets/images/welcome-3-thumb.jpg';
+import { useWelcomeTracking } from '@/hooks';
 
 import IntroLayout from '@/components/introLayout/introLayout.tsx';
 
@@ -14,6 +15,13 @@ import './Registration.scss';
 // const SENDPULSE_EVENT_FLAG = 'sp_event_bb7cbbea9d544af3e93c2ad9c6eb366a_sent';
 
 const RegistrationPage = () => {
+  useWelcomeTracking({
+    chatterfyEvent: 'linksend',
+    sendPulseTag: 'linksend',
+    sendPulseEventId: 'bb7cbbea9d544af3e93c2ad9c6eb366a',
+    sendPulseEventFlag: 'sp_event_bb7cbbea9d544af3e93c2ad9c6eb366a_sent',
+  });
+
   const [registerSuccess, setRegisterSuccess] = useState<boolean>(false);
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
   const [isChecking, setIsChecking] = useState<boolean>(false);
@@ -21,47 +29,6 @@ const RegistrationPage = () => {
   const progressIntervalRef = useRef<number | null>(null);
   const { sendTag } = useSendPulseTag();
   const userId = localStorage.getItem('user_id') || '';
-
-  // -------------------------------------------
-  // ТЕГ "linksend" ПРИ ЗАВАНТАЖЕННІ
-  // -------------------------------------------
-  useEffect(() => {
-    const sendLinkSendTag = async () => {
-      const contactId = localStorage.getItem('contact_id');
-      if (contactId) {
-        try {
-          await sendTag(contactId, ['linksend']);
-          console.log("SendPulse тег 'linksend' відправлено.");
-        } catch (e) {
-          console.error("Помилка при відправці тегу 'linksend':", e);
-        }
-      }
-    };
-    sendLinkSendTag();
-  }, [sendTag]);
-
-  // -------------------------------------------
-  // GET постбек у Chatterfy (linksend) ПРИ ЗАВАНТАЖЕННІ
-  // -------------------------------------------
-  useEffect(() => {
-    const sendPostbackOnLoad = async () => {
-      const storedClickId = localStorage.getItem('click_id');
-      if (storedClickId) {
-        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/f605fba2-697b-4a32-88f8-5cda8d515b91/tracker-postback?tracker.event=linksend&clickid=${storedClickId}`;
-        try {
-          await fetch(postbackUrl, { method: 'GET', mode: 'no-cors' });
-          console.log("Chatterfy 'linksend' postback відправлено.");
-        } catch (error) {
-          console.error("Помилка Chatterfy 'linksend':", error);
-        }
-      } else {
-        console.warn(
-          "Click ID не знайдено. Chatterfy 'linksend' не відправлено."
-        );
-      }
-    };
-    sendPostbackOnLoad();
-  }, []);
 
   // -------------------------------------------
   // ОДНОРАЗОВИЙ POST В SendPulse EVENTS ПРИ ЗАВАНТАЖЕННІ

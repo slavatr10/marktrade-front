@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { getAuthTelegram } from '@/api/auth';
-import { useSendPulseTag } from '@/hooks/useSendPulse';
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { getAuthTelegram } from "@/api/auth";
+import { useSendPulseTag } from "@/hooks/useSendPulse";
 
 type AuthStatus =
-  | 'loading'
-  | 'authenticated'
-  | 'no-access'
-  | 'welcome'
-  | 'error';
+  | "loading"
+  | "authenticated"
+  | "no-access"
+  | "welcome"
+  | "error";
 
 interface TelegramUser {
   id: number;
@@ -23,18 +23,18 @@ interface UseTelegramAuthReturn {
 
 /** ───────────── storage helpers ───────────── */
 const saveTelegramUser = (user: TelegramUser) => {
-  localStorage.setItem('user_name', user.username || '');
-  localStorage.setItem('user_id', String(user.id));
+  localStorage.setItem("user_name", user.username || "");
+  localStorage.setItem("user_id", String(user.id));
 };
 
 const saveUserData = (clickId: string, contactId: string) => {
-  localStorage.setItem('click_id', clickId || '');
-  localStorage.setItem('contact_id', contactId || '');
+  localStorage.setItem("click_id", clickId || "");
+  localStorage.setItem("contact_id", contactId || "");
 };
 
 const saveTokens = (accessToken?: string, refreshToken?: string) => {
-  if (accessToken) sessionStorage.setItem('access_token', accessToken);
-  if (refreshToken) sessionStorage.setItem('refresh_token', refreshToken);
+  if (accessToken) sessionStorage.setItem("access_token", accessToken);
+  if (refreshToken) sessionStorage.setItem("refresh_token", refreshToken);
 };
 
 /** ───────────── Telegram bootstrap ─────────────
@@ -90,52 +90,52 @@ const waitForTelegramSDK = (timeoutMs = 3000, stepMs = 100): Promise<boolean> =>
 const handleAuthResponse = async (
   response: any,
   navigate: ReturnType<typeof useNavigate>,
-  sendTag: (contactId: string, tags: string[]) => Promise<boolean>
+  sendTag: (contactId: string, tags: string[]) => Promise<boolean>,
 ): Promise<AuthStatus> => {
   if (response?.isError) {
     switch (response.status) {
       case 404:
-        return 'no-access';
+        return "no-access";
       case 401:
         saveUserData(
-          response.data?.clickId || '',
-          String(response.data?.contactId || '')
+          response.data?.clickId || "",
+          String(response.data?.contactId || ""),
         );
-        navigate({ to: '/start' });
-        return 'welcome';
+        navigate({ to: "/start" });
+        return "welcome";
       default:
-        return 'error';
+        return "error";
     }
   }
 
   // токени, якщо є
   saveTokens(
     response.data?.tokens?.accessToken,
-    response.data?.tokens?.refreshToken
+    response.data?.tokens?.refreshToken,
   );
 
   // повна реєстрація
   if (response.data?.user?.registration) {
-    const clickId = response.data.user.clickId || '';
-    const contactId = String(response.data.user.contactId || '');
+    const clickId = response.data.user.clickId || "";
+    const contactId = String(response.data.user.contactId || "");
 
     // зберігаємо саме contactId у localStorage.contact_id
     saveUserData(clickId, contactId);
 
     if (contactId) {
       try {
-        await sendTag(contactId, ['regdone']);
+        await sendTag(contactId, ["regdone"]);
       } catch {}
     }
-    return 'authenticated';
+    return "authenticated";
   }
 
-  return 'authenticated';
+  return "authenticated";
 };
 
 /** ───────────── main hook ───────────── */
 export const useTelegramAuth = (): UseTelegramAuthReturn => {
-  const [status, setStatus] = useState<AuthStatus>('loading');
+  const [status, setStatus] = useState<AuthStatus>("loading");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { sendTag } = useSendPulseTag();
@@ -145,7 +145,7 @@ export const useTelegramAuth = (): UseTelegramAuthReturn => {
   // Захист від setState після анмаунта
   const mountedRef = useRef(true);
 
-  const resetNoAccess = () => setStatus('loading');
+  const resetNoAccess = () => setStatus("loading");
 
   useEffect(() => {
     mountedRef.current = true;
@@ -159,19 +159,19 @@ export const useTelegramAuth = (): UseTelegramAuthReturn => {
       try {
         const sdkAvailable = await waitForTelegramSDK();
         if (!sdkAvailable) {
-          if (mountedRef.current) setStatus('error');
+          if (mountedRef.current) setStatus("error");
           return;
         }
 
         const ok = initializeTelegramWebApp();
         if (!ok) {
-          if (mountedRef.current) setStatus('error');
+          if (mountedRef.current) setStatus("error");
           return;
         }
 
-        const userId = localStorage.getItem('user_id') || '';
+        const userId = localStorage.getItem("user_id") || "";
         if (!userId) {
-          if (mountedRef.current) setStatus('error');
+          if (mountedRef.current) setStatus("error");
           return;
         }
 
@@ -179,7 +179,7 @@ export const useTelegramAuth = (): UseTelegramAuthReturn => {
         const newStatus = await handleAuthResponse(response, navigate, sendTag);
         if (mountedRef.current) setStatus(newStatus);
       } catch (error) {
-        if (mountedRef.current) setStatus('error');
+        if (mountedRef.current) setStatus("error");
       } finally {
         if (mountedRef.current) {
           setIsLoading(false);

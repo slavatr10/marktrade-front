@@ -1,46 +1,46 @@
-import { useEffect, useState, useRef } from 'react';
-import { IntroductionContent, SuccessPage } from '@/components';
-import { useSendPulseTag } from '@/hooks/useSendPulse';
-import bgImage from '@/assets/images/main-bg.png';
-import { Title } from '@/components/typography';
-import wayIcon from '@/assets/images/way-icon.png';
-import switchIcon from '@/assets/images/switch-icon.png';
-import handsIcon from '@/assets/images/hands-icon.png';
-import { getAuthTelegram } from '@/api/auth';
-import { ROUTES } from '@/constants';
-import { useTelegramAuth } from '@/hooks';
+import { useState, useRef } from "react";
+import { IntroductionContent, SuccessPage } from "@/components";
+import { useSendPulseTag } from "@/hooks/useSendPulse";
+import bgImage from "@/assets/images/main-bg.png";
+import { Title } from "@/components/typography";
+import wayIcon from "@/assets/images/way-icon.png";
+import switchIcon from "@/assets/images/switch-icon.png";
+import handsIcon from "@/assets/images/hands-icon.png";
+import { getAuthTelegram } from "@/api/auth";
+import { ROUTES } from "@/constants";
+import { useTelegramAuth, useWelcomeTracking } from "@/hooks";
 
-const SENDPULSE_EVENT_FLAG = 'sp_event_4edc2ef573b946fdefa7ada4749fee0c_sent';
+const SENDPULSE_EVENT_FLAG = "sp_event_4edc2ef573b946fdefa7ada4749fee0c_sent";
 
 const contentData = [
   {
-    title: 'Что такое трейдинг: просто о главном',
+    title: "Что такое трейдинг: просто о главном",
     description:
-      'Узнай, как работает финансовый рынок и почему трейдинг - это не азарт, а система. Мы разберём, кто такие трейдеры, как они зарабатывают на движении цен и почему каждый человек может освоить этот навык. Ты увидишь реальные примеры сделок и поймёшь, что для старта не нужны миллионы - достаточно знаний и правильного подхода. Этот урок разрушит мифы и покажет, что трейдинг - это инструмент для тех, кто хочет контролировать свой доход.',
+      "Узнай, как работает финансовый рынок и почему трейдинг - это не азарт, а система. Мы разберём, кто такие трейдеры, как они зарабатывают на движении цен и почему каждый человек может освоить этот навык. Ты увидишь реальные примеры сделок и поймёшь, что для старта не нужны миллионы - достаточно знаний и правильного подхода. Этот урок разрушит мифы и покажет, что трейдинг - это инструмент для тех, кто хочет контролировать свой доход.",
     videoSrc:
-      'https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/playlist.m3u8',
+      "https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/playlist.m3u8",
     thumbnail:
-      'https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/thumbnail_b9607889.jpg',
+      "https://vz-774045bd-680.b-cdn.net/f4189520-fabc-465b-813f-4c090cf92998/thumbnail_b9607889.jpg",
     headerIcon: wayIcon,
     isRegister: false,
   },
   {
-    title: 'Наша команда и система обучения',
+    title: "Наша команда и система обучения",
     description:
-      'Мы расскажем, почему наша методика работает, как построено обучение, и за счёт чего результаты приходят быстро и без перегрузки. Ты узнаешь, чем наша команда отличается от других: ежедневная поддержка, пошаговая стратегия и реальная торговая практика под руководством наставников. После этого урока у тебя появится уверенность, что ты не один - за твоей спиной будет команда, которая поможет на каждом этапе.',
+      "Мы расскажем, почему наша методика работает, как построено обучение, и за счёт чего результаты приходят быстро и без перегрузки. Ты узнаешь, чем наша команда отличается от других: ежедневная поддержка, пошаговая стратегия и реальная торговая практика под руководством наставников. После этого урока у тебя появится уверенность, что ты не один - за твоей спиной будет команда, которая поможет на каждом этапе.",
     videoSrc:
-      'https://vz-3325699a-726.b-cdn.net/ddd7c6f7-b637-420f-9a7a-a675dea76a81/playlist.m3u8',
-    thumbnail: 'https://spro-trade.b-cdn.net/EDU3/v2.jpg',
+      "https://vz-3325699a-726.b-cdn.net/ddd7c6f7-b637-420f-9a7a-a675dea76a81/playlist.m3u8",
+    thumbnail: "https://spro-trade.b-cdn.net/EDU3/v2.jpg",
     headerIcon: switchIcon,
     isRegister: false,
   },
   {
-    title: 'Регистрация на торговой платформе',
+    title: "Регистрация на торговой платформе",
     description:
-      'Пора перейти от теории к практике. В этом видео ты узнаешь, как пройти регистрацию на торговой платформе, подтвердить свой аккаунт и выполнить базовые настройки для начала работы. Мы покажем каждый шаг прямо на экране - без спешки и путаницы, чтобы ты мог просто повторять за нами и всё сделать правильно с первого раза. После этого ты сможешь войти в личный кабинет, протестировать платформу и совершить свою первую демо-сделку. ⚠️ Важно: чтобы перейти к следующему модулю и открыть доступ к следующим урокам, тебе необходимо завершить регистрацию на платформе.',
+      "Пора перейти от теории к практике. В этом видео ты узнаешь, как пройти регистрацию на торговой платформе, подтвердить свой аккаунт и выполнить базовые настройки для начала работы. Мы покажем каждый шаг прямо на экране - без спешки и путаницы, чтобы ты мог просто повторять за нами и всё сделать правильно с первого раза. После этого ты сможешь войти в личный кабинет, протестировать платформу и совершить свою первую демо-сделку. ⚠️ Важно: чтобы перейти к следующему модулю и открыть доступ к следующим урокам, тебе необходимо завершить регистрацию на платформе.",
     videoSrc:
-      'https://vz-3325699a-726.b-cdn.net/3cfe4f01-391b-4b75-b8e8-b8a121442d32/playlist.m3u8',
-    thumbnail: 'https://spro-trade.b-cdn.net/EDU3/reg.jpg',
+      "https://vz-3325699a-726.b-cdn.net/3cfe4f01-391b-4b75-b8e8-b8a121442d32/playlist.m3u8",
+    thumbnail: "https://spro-trade.b-cdn.net/EDU3/reg.jpg",
     headerIcon: handsIcon,
     isRegister: true,
   },
@@ -48,6 +48,13 @@ const contentData = [
 
 const WelcomePage = () => {
   useTelegramAuth();
+  useWelcomeTracking({
+    chatterfyEvent: "vstyp1",
+    sendPulseTag: "vstyp1",
+    sendPulseEventId: "4edc2ef573b946fdefa7ada4749fee0c",
+    sendPulseEventFlag: SENDPULSE_EVENT_FLAG,
+  });
+
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const { sendTag } = useSendPulseTag();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -55,33 +62,33 @@ const WelcomePage = () => {
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
 
   const handleRegisterCheckUp = async () => {
-    const userId = localStorage.getItem('user_id') || '';
+    const userId = localStorage.getItem("user_id") || "";
     try {
       const response = await getAuthTelegram(userId);
       if (response?.data?.user?.registration) {
         sessionStorage.setItem(
-          'access_token',
-          response.data.tokens.accessToken
+          "access_token",
+          response.data.tokens.accessToken,
         );
         sessionStorage.setItem(
-          'refresh_token',
-          response.data.tokens.refreshToken
+          "refresh_token",
+          response.data.tokens.refreshToken,
         );
         localStorage.setItem(
-          'contact_id',
-          response?.data?.user?.contactId || ''
+          "contact_id",
+          response?.data?.user?.contactId || "",
         );
 
         const contactId = response.data.user.contactId;
         if (contactId) {
-          await sendTag(contactId, ['regdone']);
+          await sendTag(contactId, ["regdone"]);
         }
         setRegisterSuccess(true);
       } else {
         setRegisterSuccess(false);
       }
     } catch (error) {
-      console.log('Помилка при перевірці реєстрації:', error);
+      console.log("Помилка при перевірці реєстрації:", error);
       setRegisterSuccess(false);
     } finally {
       setButtonClicked(true);
@@ -95,130 +102,26 @@ const WelcomePage = () => {
 
       setTimeout(() => {
         itemRefs.current[nextIndex]?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
+          behavior: "smooth",
+          block: "start",
         });
       }, 50);
     }
   };
 
-  useEffect(() => {
-    const storedClickId = localStorage.getItem('click_id');
-    const contactId = localStorage.getItem('contact_id');
-
-    const sendChatterfyPostback = async () => {
-      if (storedClickId) {
-        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/8dd8f7ba-3f29-4da8-9db4-3f04bf067c5e/tracker-postback?tracker.event=vstyp1&clickid=${storedClickId}`;
-        try {
-          await fetch(postbackUrl, {
-            method: 'GET',
-            mode: 'no-cors',
-          });
-          console.log(
-            "Chatterfy 'vstyp1' postback відправлено успішно (одноразово)."
-          );
-        } catch (error) {
-          console.error(
-            "Помилка при відправці Chatterfy 'vstyp1' postback:",
-            error
-          );
-        }
-      } else {
-        console.warn(
-          "Click ID не знайдено в localStorage. Chatterfy 'vstyp1' postback не відправлено."
-        );
-      }
-    };
-    const sendSendPulseTag = async () => {
-      if (contactId) {
-        try {
-          await sendTag(contactId, ['vstyp1']);
-          console.log(
-            "SendPulse тег 'vstyp1' відправлено успішно (одноразово) для contactId:",
-            contactId
-          );
-        } catch (error) {
-          console.error(
-            "Помилка при відправці SendPulse тегу 'vstyp1':",
-            error
-          );
-        }
-      } else {
-        console.warn(
-          "Contact ID не знайдено в localStorage. SendPulse тег 'vstyp1' не відправлено."
-        );
-      }
-    };
-
-    const sendSendPulseEvent = async () => {
-      if (!contactId) {
-        console.warn(
-          'Contact ID не знайдено в localStorage. SendPulse Event не відправлено.'
-        );
-
-        return;
-      }
-
-      // унікальний флаг на рівні contactId, щоб не дублювати запит
-      const flagKey = `${SENDPULSE_EVENT_FLAG}:${contactId}`;
-      if (localStorage.getItem(flagKey)) {
-        console.info('SendPulse Event вже було відправлено раніше. Пропускаю.');
-        return;
-      }
-
-      const url =
-        'https://events.sendpulse.com/events/id/4edc2ef573b946fdefa7ada4749fee0c/8940703';
-
-      const payload = {
-        email: 'sukomyzukrainy@proton.me',
-        chatbots_channel: 'tg',
-        chatbots_subscriber_id: contactId,
-        event_date: new Date().toISOString(),
-      };
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-      try {
-        await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal,
-        });
-
-        localStorage.setItem(flagKey, '1');
-        console.log(
-          'SendPulse Event (POST) відправлено успішно (одноразово) для contactId:',
-          contactId
-        );
-      } catch (error) {
-        console.error('Помилка при відправці SendPulse Event (POST):', error);
-      } finally {
-        clearTimeout(timeoutId);
-      }
-    };
-
-    sendChatterfyPostback();
-    sendSendPulseTag();
-    sendSendPulseEvent();
-  }, []);
-
   if (buttonClicked) {
     return (
       <SuccessPage
-        type={registerSuccess ? 'success' : 'failure'}
-        text={registerSuccess ? 'Регистрация успешна' : 'Ошибка регистрации'}
-        linkUrl={registerSuccess ? ROUTES.HOME : '/welcome-first'}
-        linkText={registerSuccess ? 'Продолжить' : 'Повторить'}
+        type={registerSuccess ? "success" : "failure"}
+        text={registerSuccess ? "Регистрация успешна" : "Ошибка регистрации"}
+        linkUrl={registerSuccess ? ROUTES.HOME : "/welcome-first"}
+        linkText={registerSuccess ? "Продолжить" : "Повторить"}
         setButtonClicked={setButtonClicked}
         isRegistration
         helperText={
           registerSuccess
-            ? ''
-            : 'что-то пошло не так, попробуйте еще раз или напишите мне'
+            ? ""
+            : "что-то пошло не так, попробуйте еще раз или напишите мне"
         }
       />
     );
@@ -229,9 +132,9 @@ const WelcomePage = () => {
       className="flex min-h-screen w-full flex-col justify-between bg-natural-950     pt-[calc(6.8rem+var(--safe-top))]       md:pt-[calc(4rem+var(--safe-top))]  "
       style={{
         backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
       }}
     >
       <div className="px-4">
@@ -250,8 +153,8 @@ const WelcomePage = () => {
                   setActiveIndex(index);
                   setTimeout(() => {
                     itemRefs.current[index]?.scrollIntoView({
-                      behavior: 'smooth',
-                      block: 'center',
+                      behavior: "smooth",
+                      block: "center",
                     });
                   }, 50);
                 }

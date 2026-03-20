@@ -1,110 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 
 import bgImage from '@/assets/images/main-bg.png';
-import { useSendPulseTag } from '@/hooks/useSendPulse';
+import { useWelcomeTracking } from '@/hooks';
 import IntroLayout from '@/components/introLayout/introLayout.tsx';
 import { GlobalLoader, IntroductionContent } from '@/components';
 import welcomeThumbnail from '@/assets/images/welcome-2-thumb.jpg';
 import welcomeThumbnailNext from '@/assets/images/welcome-3-thumb.jpg';
 import { preloadImages } from '@/utils/preloadImages';
 
-// Оголошуємо унікальні ключі для localStorage для цієї сторінки
-const CHATTERFY_POSTBACK_FLAG_2 = 'chatterfy_vstyp2_postback_sent';
-const SENDPULSE_TAG_FLAG_2 = 'sendpulse_vstyp2_tag_sent';
-
 const WelcomeSecondPage = () => {
-  const { sendTag } = useSendPulseTag();
+  useWelcomeTracking({
+    chatterfyEvent: 'vstyp2',
+    sendPulseTag: 'vstyp2',
+  });
+
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const animationIntervalRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const storedClickId = localStorage.getItem('click_id');
-    const contactId = localStorage.getItem('contact_id');
-
-    // -------------------------------------------
-    // GET постбек у Chatterfy (vstyp2) - один раз
-    // -------------------------------------------
-    const sendChatterfyPostback = async () => {
-      // Перевіряємо, чи був вже відправлений postback
-      if (localStorage.getItem(CHATTERFY_POSTBACK_FLAG_2)) {
-        console.log("Chatterfy 'vstyp2' postback вже було відправлено раніше. Пропускаю.");
-        return;
-      }
-
-      if (storedClickId) {
-        const postbackUrl = `https://api.chatterfy.ai/api/postbacks/f605fba2-697b-4a32-88f8-5cda8d515b91/tracker-postback?tracker.event=vstyp2&clickid=${storedClickId}`;
-        try {
-          await fetch(postbackUrl, { method: 'GET', mode: 'no-cors' });
-          // Встановлюємо прапор після успішної відправки
-          localStorage.setItem(CHATTERFY_POSTBACK_FLAG_2, '1');
-          console.log(
-            "Chatterfy 'vstyp2' postback відправлено успішно (одноразово)."
-          );
-        } catch (error) {
-          console.error(
-            "Помилка при відправці Chatterfy 'vstyp2' postback:",
-            error
-          );
-        }
-      } else {
-        console.warn(
-          "Click ID не знайдено в localStorage. Chatterfy 'vstyp2' postback не відправлено."
-        );
-      }
-    };
-
-    // -------------------------------------------
-    // Тег "vstyp2" у SendPulse - один раз
-    // -------------------------------------------
-    const sendSendPulseTag = async () => {
-      // Перевіряємо, чи був вже відправлений тег
-      if (localStorage.getItem(SENDPULSE_TAG_FLAG_2)) {
-        console.log("SendPulse тег 'vstyp2' вже було відправлено раніше. Пропускаю.");
-        return;
-      }
-        
-      if (contactId) {
-        try {
-          await sendTag(contactId, ['vstyp2']);
-          // Встановлюємо прапор після успішної відправки
-          localStorage.setItem(SENDPULSE_TAG_FLAG_2, '1');
-          console.log(
-            "SendPulse тег 'vstyp2' відправлено успішно (одноразово) для contactId:",
-            contactId
-          );
-        } catch (error) {
-          console.error(
-            "Помилка при відправці SendPulse тегу 'vstyp2':",
-            error
-          );
-        }
-      } else {
-        console.warn(
-          "Contact ID не знайдено в localStorage. SendPulse тег 'vstyp2' не відправлено."
-        );
-      }
-    };
-      
-    // -------------------------------------------
-    // Одноразовий POST у SendPulse EVENTS - ЗАКОМЕНТОВАНО ЗА ЗАПИТОМ
-    // -------------------------------------------
-    /*
-    const sendSendPulseEvent = async () => {
-        // Логіка для відправки івенту в SendPulse
-        // Не забудьте додати перевірку з прапором у localStorage,
-        // як у попередніх функціях, щоб уникнути повторень.
-    };
-    */
-
-    sendChatterfyPostback();
-    sendSendPulseTag();
-    // sendSendPulseEvent(); // Виклик закоментовано
-
-  }, [sendTag]);
 
   const handleNextClick = async () => {
     setIsLoading(true);

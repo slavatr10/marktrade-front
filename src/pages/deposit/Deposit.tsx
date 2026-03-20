@@ -1,19 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { getAuthTelegram } from '@/api/auth';
 import { Button, LinkComponent, SuccessPage, VideoPlayer } from '@/components';
-import { useSendPulseTag } from '@/hooks/useSendPulse';
+import { useDepositTracking } from '@/hooks';
 import bgImage from '@/assets/images/main-bg.png';
 import { Body, Title } from '@/components/typography';
 import { ArrowLeft } from '@/assets/icons';
 import { useNavigate } from '@tanstack/react-router';
 
-// const SENDPULSE_EVENT_FLAG = 'sp_event_136f6be1a25b488afabce0671ab99e9c_sent';
-const spTagFlagKey = (contactId: string) =>
-  `sp_tag_readytodep_sent:${contactId}`;
-const chatterfyFlagKey = (clickId: string) =>
-  `chatterfy_readytodep_sent:${clickId}`;
-
 const DepositPage = () => {
+  useDepositTracking();
+
   const [loadingCheckDeposit, setLoadingCheckDeposit] = useState(false);
   const [depositSuccess, setDepositSuccess] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -21,107 +17,6 @@ const DepositPage = () => {
 
   const userId = localStorage.getItem('user_id') || '';
   // const search = useSearch({ from: '/deposit' });
-
-  // важливо: збережемо поточну функцію у ref, щоб не мінялась у залежностях
-  const { sendTag } = useSendPulseTag();
-  const sendTagRef = useRef(sendTag);
-  sendTagRef.current = sendTag;
-
-  const ranRef = useRef(false); // захист від подвійного виклику (StrictMode/ремаути)
-  // const courseId = search.courseId || localStorage.getItem('courseId');
-
-  useEffect(() => {
-    if (ranRef.current) return;
-    ranRef.current = true;
-
-    const storedClickId = localStorage.getItem('click_id') || '';
-    const contactId = localStorage.getItem('contact_id') || '';
-
-    // --- SendPulse Tag (one-time per contact) ---
-    const sendSendPulseTag = async () => {
-      if (!contactId) return;
-      const flagKey = spTagFlagKey(contactId);
-      if (localStorage.getItem(flagKey)) {
-        console.info('SendPulse tag already sent. Skipping.');
-        return;
-      }
-      try {
-        await sendTagRef.current(contactId, ['readytodep']);
-        localStorage.setItem(flagKey, '1');
-        console.log("SendPulse tag 'readytodep' sent once.");
-      } catch (error) {
-        console.error('SendPulse tag error:', error);
-      }
-    };
-
-    // --- Chatterfy Postback (one-time per clickId) ---
-    const sendChatterfyPostback = async () => {
-      if (!storedClickId) return;
-      const flagKey = chatterfyFlagKey(storedClickId);
-      if (localStorage.getItem(flagKey)) {
-        console.info('Chatterfy postback already sent. Skipping.');
-        return;
-      }
-      const postbackUrl =
-        `https://api.chatterfy.ai/api/postbacks/f605fba2-697b-4a32-88f8-5cda8d515b91/` +
-        `tracker-postback?tracker.event=readytodep&clickid=${encodeURIComponent(
-          storedClickId
-        )}`;
-      try {
-        await fetch(postbackUrl, { method: 'GET', mode: 'no-cors' });
-        localStorage.setItem(flagKey, '1');
-        console.log("Chatterfy 'readytodep' postback sent once.");
-      } catch (error) {
-        console.error('Chatterfy postback error:', error);
-      }
-    };
-
-    // --- SendPulse Events POST (already one-time per contact) ---
-    // const sendSendPulseEvent = async () => {
-    //   if (!contactId) {
-    //     console.warn('No contactId. Skipping SendPulse Event.');
-    //     return;
-    //   }
-    //   const flagKey = `${SENDPULSE_EVENT_FLAG}:${contactId}`;
-    //   if (localStorage.getItem(flagKey)) {
-    //     console.info('SendPulse Event already sent. Skipping.');
-    //     return;
-    //   }
-    //
-    //   const url =
-    //     'https://events.sendpulse.com/events/id/136f6be1a25b488afabce0671ab99e9c/8940703';
-    //   const payload = {
-    //     email: 'sukomyzukrainy@proton.me',
-    //     chatbots_channel: 'tg',
-    //     chatbots_subscriber_id: contactId,
-    //     event_date: new Date().toISOString(),
-    //   };
-    //
-    //   const controller = new AbortController();
-    //   const timeoutId = setTimeout(() => controller.abort(), 8000);
-    //
-    //   try {
-    //     await fetch(url, {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify(payload),
-    //       signal: controller.signal,
-    //       // mode: "no-cors", // розкоментувати тільки якщо справді впирається у CORS
-    //     });
-    //     localStorage.setItem(flagKey, '1');
-    //     console.log('SendPulse Event POST sent once.');
-    //   } catch (error) {
-    //     console.error('SendPulse Event POST error:', error);
-    //   } finally {
-    //     clearTimeout(timeoutId);
-    //   }
-    // };
-
-    // запускаємо паралельно, але незалежно
-    void sendSendPulseTag();
-    void sendChatterfyPostback();
-    // void sendSendPulseEvent();
-  }, []); // <- ПУСТИЙ масив залежностей - ефект тільки на маунт
 
   const handleVerifyDeposit = async () => {
     setLoadingCheckDeposit(true);
